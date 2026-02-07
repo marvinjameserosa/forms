@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from("orders")
     .select(
-      "id,full_name,email,phone,address,item_name,size,quantity,unit_price,line_total,status,created_at"
+      "id,full_name,email,phone,address,payment_method,gcash_reference,gcash_receipt_url,item_name,size,quantity,unit_price,line_total,status,created_at"
     )
     .order("created_at", { ascending: false });
 

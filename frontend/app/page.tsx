@@ -22,6 +22,9 @@ type CartItem = {
   quantity: number;
 };
 
+const GCASH_BUCKET = "gcash-receipts";
+const MAX_RECEIPT_SIZE = 5 * 1024 * 1024;
+
 export default function Home() {
   const [merchItems, setMerchItems] = useState<MerchItem[]>([]);
   const [merchLoading, setMerchLoading] = useState(true);
@@ -196,19 +199,71 @@ export default function Home() {
     const email = String(formData.get("email") ?? "").trim();
     const phone = String(formData.get("contactNumber") ?? "").trim();
     const address = String(formData.get("address") ?? "").trim();
+    const paymentMethod = String(formData.get("paymentMethod") ?? "gcash");
+    const gcashReference = String(
+      formData.get("gcashReference") ?? ""
+    ).trim();
+    const receiptFile = formData.get("gcashReceipt");
 
     if (!fullName || !email || !phone || !address) {
       setSubmitError("Please complete all contact fields.");
       return;
     }
 
+    if (paymentMethod !== "gcash") {
+      setSubmitError("Select GCash as your payment method.");
+      return;
+    }
+
+    if (!gcashReference) {
+      setSubmitError("Enter your GCash reference number.");
+      return;
+    }
+
+    if (!(receiptFile instanceof File) || receiptFile.size === 0) {
+      setSubmitError("Upload your GCash receipt screenshot.");
+      return;
+    }
+
+    if (!receiptFile.type.startsWith("image/")) {
+      setSubmitError("Receipt screenshot must be an image file.");
+      return;
+    }
+
+    if (receiptFile.size > MAX_RECEIPT_SIZE) {
+      setSubmitError("Receipt image must be 5MB or smaller.");
+      return;
+    }
+
     setSubmitting(true);
+
+    const fileExtension =
+      receiptFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const uploadPath = `gcash/${crypto.randomUUID()}.${fileExtension}`;
+    const { error: uploadError } = await supabase.storage
+      .from(GCASH_BUCKET)
+      .upload(uploadPath, receiptFile, {
+        contentType: receiptFile.type,
+      });
+
+    if (uploadError) {
+      setSubmitError("Unable to upload receipt. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    const receiptUrl = supabase.storage
+      .from(GCASH_BUCKET)
+      .getPublicUrl(uploadPath).data.publicUrl;
 
     const orderRows = cartItems.map((item) => ({
       full_name: fullName,
       email,
       phone,
       address,
+      payment_method: "gcash",
+      gcash_reference: gcashReference,
+      gcash_receipt_url: receiptUrl,
       item_id: item.itemId,
       item_name: item.name,
       size: item.size,
@@ -229,7 +284,7 @@ export default function Home() {
     setCartItems([]);
     setQuantities((prev) => prev.map(() => 0));
     form.reset();
-    setSubmitSuccess("Order received! We'll email you with next steps.");
+    setSubmitSuccess("Order received! We'll verify your GCash receipt.");
     setSubmitting(false);
   };
   return (
@@ -538,8 +593,8 @@ export default function Home() {
                 Place Your Order
               </h2>
               <p className="mt-3 text-sm leading-6 text-white/70">
-                Fill up the form below to reserve your merch. We will follow up
-                with payment details and size confirmation.
+                Fill up the form below and attach your GCash receipt to confirm
+                your merch order.
               </p>
               <div className="mt-6 grid gap-4 text-xs uppercase tracking-[0.25em] text-white/60">
                 <div className="flex items-center gap-3">
@@ -591,6 +646,47 @@ export default function Home() {
                   placeholder="House No., Street, City"
                   required
                   className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                />
+              </label>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+                  Payment Method
+                </p>
+                <label className="mt-3 flex items-center gap-3 text-sm text-white/80">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="gcash"
+                    defaultChecked
+                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
+                  />
+                  GCash
+                </label>
+                <p className="mt-2 text-xs text-white/60">
+                  Upload your GCash receipt before confirming the order.
+                </p>
+              </div>
+
+              <label className="text-sm text-white/80">
+                GCash Reference No.
+                <input
+                  type="text"
+                  name="gcashReference"
+                  placeholder="0000000000"
+                  required
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                />
+              </label>
+
+              <label className="text-sm text-white/80">
+                GCash Receipt Screenshot
+                <input
+                  type="file"
+                  name="gcashReceipt"
+                  accept="image/*"
+                  required
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-xs file:uppercase file:tracking-[0.2em] file:text-white/80"
                 />
               </label>
 

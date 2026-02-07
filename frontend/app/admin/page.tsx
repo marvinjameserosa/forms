@@ -11,6 +11,9 @@ type OrderItem = {
   email: string;
   phone: string;
   address: string;
+  paymentMethod: string;
+  gcashReference: string;
+  gcashReceiptUrl: string;
   item: string;
   size: string;
   quantity: number;
@@ -74,6 +77,9 @@ export default function AdminPage() {
         email: string;
         phone: string;
         address: string;
+        payment_method: string;
+        gcash_reference: string;
+        gcash_receipt_url: string;
         item_name: string;
         size: string;
         quantity: number;
@@ -91,6 +97,9 @@ export default function AdminPage() {
         email: order.email,
         phone: order.phone,
         address: order.address,
+        paymentMethod: order.payment_method,
+        gcashReference: order.gcash_reference,
+        gcashReceiptUrl: order.gcash_receipt_url,
         item: order.item_name,
         size: order.size,
         quantity: order.quantity,
@@ -134,6 +143,9 @@ export default function AdminPage() {
         order.phone,
         order.item,
         order.size,
+        order.paymentMethod,
+        order.gcashReference,
+        order.gcashReceiptUrl,
         order.status,
         ].some((field) => field.toLowerCase().includes(normalized));
       const matchesStatus =
@@ -229,6 +241,9 @@ export default function AdminPage() {
       "Email",
       "Phone",
       "Address",
+      "Payment Method",
+      "GCash Reference",
+      "GCash Receipt",
       "Item",
       "Size",
       "Qty",
@@ -244,6 +259,9 @@ export default function AdminPage() {
       order.email,
       order.phone,
       order.address,
+      order.paymentMethod,
+      order.gcashReference,
+      order.gcashReceiptUrl,
       order.item,
       order.size,
       String(order.quantity),
@@ -491,12 +509,13 @@ export default function AdminPage() {
               </div>
 
               <div className="mt-5 overflow-x-auto rounded-2xl border border-white/10">
-                <table className="w-full min-w-[1100px] text-left text-sm text-white/80">
+                <table className="w-full min-w-[1300px] text-left text-sm text-white/80">
                   <thead className="bg-white/5 text-xs uppercase tracking-[0.2em] text-white/60">
                     <tr>
                       <th className="px-4 py-3">Order</th>
                       <th className="px-4 py-3">Customer</th>
                       <th className="px-4 py-3">Address</th>
+                      <th className="px-4 py-3">Payment</th>
                       <th className="px-4 py-3">Item</th>
                       <th className="px-4 py-3">Qty</th>
                       <th className="px-4 py-3">Price</th>
@@ -527,6 +546,28 @@ export default function AdminPage() {
                           <span className="block max-w-[220px] truncate">
                             {order.address}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="text-xs uppercase tracking-[0.2em] text-white/50">
+                            {order.paymentMethod}
+                          </div>
+                          <div className="text-sm font-semibold text-white">
+                            {order.gcashReference}
+                          </div>
+                          {order.gcashReceiptUrl ? (
+                            <a
+                              href={order.gcashReceiptUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs uppercase tracking-[0.2em] text-emerald-200 hover:text-emerald-100"
+                            >
+                              View Receipt
+                            </a>
+                          ) : (
+                            <div className="text-xs text-white/40">
+                              Missing receipt
+                            </div>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <div className="font-semibold text-white">
