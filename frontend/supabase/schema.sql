@@ -8,6 +8,7 @@ create table if not exists public.merch_items (
   tag text not null,
   image text not null,
   tone text not null,
+  price numeric(10,2) not null default 0,
   sizes text[] not null default array['One Size'],
   sort_order integer not null default 0,
   is_active boolean not null default true,
@@ -24,6 +25,8 @@ create table if not exists public.orders (
   item_name text not null,
   size text not null,
   quantity integer not null check (quantity > 0),
+  unit_price numeric(10,2) not null default 0,
+  line_total numeric(10,2) not null default 0,
   status public.order_status not null default 'pending',
   created_at timestamptz not null default now()
 );

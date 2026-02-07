@@ -14,6 +14,8 @@ type OrderItem = {
   item: string;
   size: string;
   quantity: number;
+  unitPrice: number;
+  lineTotal: number;
   status: "pending" | "paid";
   createdAt: string;
 };
@@ -75,6 +77,8 @@ export default function AdminPage() {
         item_name: string;
         size: string;
         quantity: number;
+        unit_price: number;
+        line_total: number;
         status: OrderItem["status"];
         created_at: string;
       }>;
@@ -90,6 +94,8 @@ export default function AdminPage() {
         item: order.item_name,
         size: order.size,
         quantity: order.quantity,
+        unitPrice: Number(order.unit_price ?? 0),
+        lineTotal: Number(order.line_total ?? 0),
         status: order.status,
         createdAt: order.created_at,
       }))
@@ -214,6 +220,67 @@ export default function AdminPage() {
       )
     );
     setStatusUpdatingId(null);
+  };
+
+  const handleExportCsv = () => {
+    const headers = [
+      "Order",
+      "Customer",
+      "Email",
+      "Phone",
+      "Address",
+      "Item",
+      "Size",
+      "Qty",
+      "Unit Price",
+      "Line Total",
+      "Status",
+      "Date",
+    ];
+
+    const rows = filteredOrders.map((order) => [
+      order.id,
+      order.name,
+      order.email,
+      order.phone,
+      order.address,
+      order.item,
+      order.size,
+      String(order.quantity),
+      order.unitPrice.toFixed(2),
+      order.lineTotal.toFixed(2),
+      order.status,
+      formatDate(order.createdAt),
+    ]);
+
+    const escapeValue = (value: string) =>
+      value.includes(",") || value.includes("\n") || value.includes('"')
+        ? `"${value.replace(/"/g, '""')}"`
+        : value;
+
+    const csv = [headers, ...rows]
+      .map((row) => row.map(escapeValue).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "orders.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const formatDate = (value: string) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+    return date.toLocaleDateString("en-PH", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    });
   };
 
   return (
@@ -403,6 +470,7 @@ export default function AdminPage() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
+                  onClick={handleExportCsv}
                   className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
                 >
                   Export CSV
@@ -423,7 +491,7 @@ export default function AdminPage() {
               </div>
 
               <div className="mt-5 overflow-x-auto rounded-2xl border border-white/10">
-                <table className="w-full min-w-[860px] text-left text-sm text-white/80">
+                <table className="w-full min-w-[1100px] text-left text-sm text-white/80">
                   <thead className="bg-white/5 text-xs uppercase tracking-[0.2em] text-white/60">
                     <tr>
                       <th className="px-4 py-3">Order</th>
@@ -431,6 +499,7 @@ export default function AdminPage() {
                       <th className="px-4 py-3">Address</th>
                       <th className="px-4 py-3">Item</th>
                       <th className="px-4 py-3">Qty</th>
+                      <th className="px-4 py-3">Price</th>
                       <th className="px-4 py-3">Status</th>
                       <th className="px-4 py-3">Date</th>
                     </tr>
@@ -455,7 +524,9 @@ export default function AdminPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-white/70">
-                          {order.address}
+                          <span className="block max-w-[220px] truncate">
+                            {order.address}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="font-semibold text-white">
@@ -469,6 +540,14 @@ export default function AdminPage() {
                           {order.quantity}
                         </td>
                         <td className="px-4 py-3">
+                          <div className="text-xs uppercase tracking-[0.2em] text-white/50">
+                            PHP {order.unitPrice.toFixed(0)}
+                          </div>
+                          <div className="text-sm font-semibold text-white">
+                            PHP {order.lineTotal.toFixed(0)}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
                           <select
                             value={order.status}
                             onChange={(event) =>
@@ -478,7 +557,7 @@ export default function AdminPage() {
                               )
                             }
                             disabled={statusUpdatingId === order.id}
-                            className={`appearance-none rounded-full border px-3 py-1 text-xs uppercase tracking-[0.2em] ${
+                            className={`appearance-none rounded-full border bg-[#050b0e] px-3 py-1 text-xs uppercase tracking-[0.2em] text-white focus:outline-none focus:ring-2 focus:ring-emerald-300/30 ${
                               statusStyles[order.status]
                             } disabled:opacity-60`}
                           >
@@ -487,7 +566,7 @@ export default function AdminPage() {
                           </select>
                         </td>
                         <td className="px-4 py-3 text-white/70">
-                          {order.createdAt}
+                          {formatDate(order.createdAt)}
                         </td>
                       </tr>
                     ))}

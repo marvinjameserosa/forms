@@ -10,12 +10,14 @@ type MerchItem = {
   image: string;
   tone: string;
   tag: string;
+  price: number;
   sizes: string[];
 };
 
 type CartItem = {
   itemId: string;
   name: string;
+  price: number;
   size: string;
   quantity: number;
 };
@@ -40,7 +42,7 @@ export default function Home() {
       setMerchLoading(true);
       const { data, error } = await supabase
         .from("merch_items")
-        .select("id,name,image,tone,tag,sizes")
+        .select("id,name,image,tone,tag,price,sizes")
         .eq("is_active", true)
         .order("sort_order", { ascending: true });
 
@@ -60,6 +62,7 @@ export default function Home() {
             image: item.image,
             tone: item.tone,
             tag: item.tag,
+            price: Number(item.price ?? 0),
             sizes:
               Array.isArray(item.sizes) && item.sizes.length > 0
                 ? item.sizes
@@ -150,7 +153,13 @@ export default function Home() {
       if (existingIndex === -1) {
         return [
           ...prev,
-          { itemId: merchItem.id, name: merchItem.name, size, quantity },
+          {
+            itemId: merchItem.id,
+            name: merchItem.name,
+            price: merchItem.price ?? 0,
+            size,
+            quantity,
+          },
         ];
       }
       return prev.map((item, i) =>
@@ -204,6 +213,8 @@ export default function Home() {
       item_name: item.name,
       size: item.size,
       quantity: item.quantity,
+      unit_price: item.price,
+      line_total: item.price * item.quantity,
       status: "pending" as const,
     }));
 
@@ -319,6 +330,14 @@ export default function Home() {
                       {item.name}
                     </h3>
                     <p className="text-sm text-white/60">{item.tag}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/50">
+                      Price
+                    </p>
+                    <p className="text-lg font-semibold text-white">
+                      PHP {(item.price ?? 0).toFixed(0)}
+                    </p>
                   </div>
                 </div>
                 {item.sizes.length === 1 ? (
