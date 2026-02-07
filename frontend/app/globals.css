@@ -3,13 +3,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --ink: #0a1116;
+  --deep-teal: #0a2a2d;
+  --teal: #0a7a7a;
+  --green: #1ea66b;
+  --amber: #f08a1a;
+  --mist: rgba(255, 255, 255, 0.14);
+  --glow: rgba(21, 180, 173, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sora);
+  --font-display: var(--font-bebas);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +29,54 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sora), sans-serif;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.font-display {
+  font-family: var(--font-bebas), sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.glass-panel {
+  background: linear-gradient(135deg, rgba(8, 28, 31, 0.9), rgba(9, 36, 44, 0.75));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+}
+
+.fade-up {
+  animation: fadeUp 700ms ease-out both;
+}
+
+.fade-delay-1 {
+  animation-delay: 120ms;
+}
+
+.fade-delay-2 {
+  animation-delay: 240ms;
+}
+
+.fade-delay-3 {
+  animation-delay: 360ms;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
