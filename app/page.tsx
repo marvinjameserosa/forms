@@ -68,6 +68,9 @@ export default function Home() {
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<
+    { src: string; alt: string } | null
+  >(null);
   const [cartToast, setCartToast] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -172,11 +175,14 @@ export default function Home() {
       if (confirmationOpen) {
         setConfirmationOpen(false);
       }
+      if (previewImage) {
+        setPreviewImage(null);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cartOpen, sizeGuideOpen, checkoutOpen, confirmationOpen]);
+  }, [cartOpen, sizeGuideOpen, checkoutOpen, confirmationOpen, previewImage]);
 
   const cartCount = useMemo(
     () => cartItems.reduce((total, item) => total + item.quantity, 0),
@@ -494,8 +500,13 @@ export default function Home() {
                 key={item.id}
                 className="glass-panel fade-up rounded-3xl p-7"
               >
-                <div
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPreviewImage({ src: item.image, alt: item.name })
+                  }
                   className={`relative h-52 w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${item.tone}`}
+                  aria-label={`View ${item.name} image`}
                 >
                   <Image
                     src={item.image}
@@ -505,7 +516,7 @@ export default function Home() {
                     sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-                </div>
+                </button>
                 <div className="mt-5 flex items-start justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-white">
@@ -618,6 +629,12 @@ export default function Home() {
             confirmationOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => setConfirmationOpen(false)}
+        />
+        <div
+          className={`fixed inset-0 z-20 bg-black/70 transition ${
+            previewImage ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          onClick={() => setPreviewImage(null)}
         />
         <aside
           role="dialog"
@@ -974,6 +991,42 @@ export default function Home() {
           >
             Close
           </button>
+        </aside>
+
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-hidden={!previewImage}
+          className={`fixed left-1/2 top-1/2 z-30 w-[94%] max-w-5xl -translate-x-1/2 -translate-y-1/2 transform rounded-3xl border border-white/10 bg-[#050b0e] p-4 transition duration-300 ${
+            previewImage
+              ? "scale-100 opacity-100"
+              : "pointer-events-none scale-95 opacity-0"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+              Image Preview
+            </h3>
+            <button
+              type="button"
+              onClick={() => setPreviewImage(null)}
+              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
+            >
+              Close
+            </button>
+          </div>
+          <div className="relative mt-4 h-[70vh] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+            {previewImage ? (
+              <Image
+                src={previewImage.src}
+                alt={previewImage.alt}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+              />
+            ) : null}
+          </div>
         </aside>
 
         {cartToast ? (
