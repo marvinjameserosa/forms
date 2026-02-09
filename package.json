@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@supabase-js/source": "github:supabase/supabase-js",
     "@supabase/supabase-js": "^2.49.1",
     "driver.js": "^1.4.0",
     "next": "16.1.6",
