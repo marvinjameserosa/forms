@@ -29,22 +29,26 @@ export async function GET(request: NextRequest) {
   }
 
   const adminUser = userData.user as AdminUser;
-  const adminRole = adminUser.app_metadata?.role ?? adminUser.user_metadata?.role;
+  const adminRole =
+    adminUser.app_metadata?.role ?? adminUser.user_metadata?.role;
   if (adminRole !== "admin") {
-    return NextResponse.json({ error: "Admin access required." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Admin access required." },
+      { status: 403 },
+    );
   }
 
   const { data, error } = await supabaseAdmin
     .from("orders")
     .select(
-      "id,full_name,email,phone,address,payment_method,gcash_reference,gcash_receipt_url,item_name,size,quantity,unit_price,line_total,status,created_at"
+      "id,full_name,email,phone,address,payment_method,gcash_reference,gcash_receipt_url,item_name,size,quantity,unit_price,line_total,status,fulfillment_method,created_at",
     )
     .order("created_at", { ascending: false });
 
   if (error) {
     return NextResponse.json(
       { error: "Unable to load orders." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -69,19 +73,32 @@ export async function PATCH(request: NextRequest) {
   }
 
   const adminUser = userData.user as AdminUser;
-  const adminRole = adminUser.app_metadata?.role ?? adminUser.user_metadata?.role;
+  const adminRole =
+    adminUser.app_metadata?.role ?? adminUser.user_metadata?.role;
   if (adminRole !== "admin") {
-    return NextResponse.json({ error: "Admin access required." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Admin access required." },
+      { status: 403 },
+    );
   }
 
-  const body = (await request.json().catch(() => null)) as
-    | { id?: string; status?: "pending" | "paid" }
-    | null;
+  const body = (await request.json().catch(() => null)) as {
+    id?: string;
+    status?:
+      | "pending"
+      | "paid"
+      | "confirmed"
+      | "packing"
+      | "shipped"
+      | "intransit"
+      | "delivered"
+      | "cancelled";
+  } | null;
 
   if (!body?.id || !body.status) {
     return NextResponse.json(
       { error: "Missing order id or status." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -93,7 +110,7 @@ export async function PATCH(request: NextRequest) {
   if (error) {
     return NextResponse.json(
       { error: "Unable to update order status." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

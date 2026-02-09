@@ -8,7 +8,7 @@ begin
     where typname = 'order_status'
       and typnamespace = 'public'::regnamespace
   ) then
-    create type public.order_status as enum ('pending', 'paid');
+    create type public.order_status as enum ('pending', 'confirmed', 'packing', 'shipped', 'intransit', 'delivered');
   end if;
 end $$;
 
