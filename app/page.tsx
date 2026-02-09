@@ -421,17 +421,16 @@ export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#050b0e] text-white">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-[-10%] h-96 w-96 rounded-full bg-[radial-gradient(circle_at_center,rgba(11,122,122,0.5),transparent_70%)] blur-3xl" />
-        <div className="absolute top-20 right-[-8%] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(240,138,26,0.45),transparent_70%)] blur-3xl" />
-        <div className="absolute bottom-[-12%] left-[30%] h-96 w-96 rounded-full bg-[radial-gradient(circle_at_center,rgba(30,166,107,0.45),transparent_70%)] blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_60%)]" />
+        <div className="absolute -top-40 left-[-10%] h-96 w-96 rounded-full bg-[#00878F]/10 blur-3xl" />
+        <div className="absolute top-20 right-[-8%] h-[28rem] w-[28rem] rounded-full bg-[#E47128]/8 blur-3xl" />
+        <div className="absolute bottom-[-12%] left-[30%] h-96 w-96 rounded-full bg-[#21935B]/8 blur-3xl" />
       </div>
 
       <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 py-16">
         <header className="flex flex-col gap-8">
           <div className="fade-up inline-flex flex-wrap items-center justify-center gap-4 text-xs uppercase tracking-[0.2em] text-white/70">
             <span className="flex items-center gap-2">
-              <span className="inline-flex h-2 w-2 rounded-full bg-amber-400" />
+              <span className="inline-flex h-2 w-2 rounded-full bg-[#E47128]" />
               March 21, 2026
             </span>
             <span className="h-3 w-px bg-white/20" />
@@ -441,8 +440,9 @@ export default function Home() {
           <div className="fade-up fade-delay-1 flex flex-col items-center gap-6 text-center">
             <div>
               <h1 className="font-display text-5xl leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-                <span className="block text-teal-400">Arduino Day</span>
-                <span className="block text-green-400">Philippines</span>
+                <span className="block text-[#00878F]">Arduino</span>
+                <span className="block text-[#E47128]">Day</span>
+                <span className="block text-[#21935B]">Philippines</span>
                 <span className="block text-white">2026 Merch</span>
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-white/75">
@@ -455,7 +455,7 @@ export default function Home() {
           <div className="fade-up fade-delay-2 flex flex-wrap justify-center gap-4">
             <a
               href="#order-form"
-              className="rounded-full bg-gradient-to-r from-teal-500 via-green-500 to-amber-400 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-black transition hover:brightness-110"
+              className="rounded-full bg-[#00878F] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#007078]"
             >
               Order Now
             </a>
@@ -472,7 +472,7 @@ export default function Home() {
               className="relative rounded-full border border-white/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/40 hover:text-white"
             >
               Cart
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-amber-400 px-1 text-[0.6rem] font-semibold text-black">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#E47128] px-1 text-[0.6rem] font-semibold text-white">
                 {cartCount}
               </span>
             </button>
@@ -486,7 +486,7 @@ export default function Home() {
             </div>
           ) : merchError ? (
             <div className="glass-panel fade-up rounded-3xl p-6 md:col-span-2 lg:col-span-3">
-              <p className="text-sm text-amber-200">{merchError}</p>
+              <p className="text-sm text-[#E47128]">{merchError}</p>
             </div>
           ) : merchItems.length === 0 ? (
             <div className="glass-panel fade-up rounded-3xl p-6 md:col-span-2 lg:col-span-3">
@@ -536,7 +536,7 @@ export default function Home() {
                 </div>
                 {item.sizes.length === 1 ? (
                   <div className="mt-4">
-                    <span className="inline-flex rounded-full border border-emerald-300/40 bg-emerald-300/15 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-emerald-100">
+                    <span className="inline-flex rounded-full border border-[#21935B]/40 bg-[#21935B]/15 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white/90">
                       {item.sizes[0]}
                     </span>
                   </div>
@@ -551,7 +551,7 @@ export default function Home() {
                           onClick={() => selectSize(index, size)}
                           className={`rounded-full border px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] transition ${
                             isSelected
-                              ? "border-emerald-300/80 bg-emerald-300/20 text-emerald-100"
+                              ? "border-[#21935B]/80 bg-[#21935B]/20 text-white/90"
                               : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
                           }`}
                           aria-pressed={isSelected}
@@ -771,7 +771,7 @@ export default function Home() {
                 setCartOpen(false);
                 setCheckoutOpen(true);
               }}
-              className="rounded-full bg-gradient-to-r from-teal-500 via-green-500 to-amber-400 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-black transition hover:brightness-110"
+              className="rounded-full bg-[#00878F] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#007078]"
             >
               Checkout
             </button>
@@ -814,7 +814,7 @@ export default function Home() {
               </p>
               <div className="mt-6 grid gap-4 text-xs uppercase tracking-[0.25em] text-white/60">
                 <div className="flex items-center gap-3">
-                  <span className="h-2 w-2 rounded-full bg-amber-400" />
+                  <span className="h-2 w-2 rounded-full bg-[#E47128]" />
                   Limited quantities
                 </div>
               </div>
@@ -828,7 +828,7 @@ export default function Home() {
                   name="fullName"
                   placeholder="Juan Dela Cruz"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-[#21935B]/70 focus:outline-none focus:ring-2 focus:ring-[#21935B]/30"
                 />
               </label>
 
@@ -839,7 +839,7 @@ export default function Home() {
                   name="email"
                   placeholder="you@email.com"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-[#21935B]/70 focus:outline-none focus:ring-2 focus:ring-[#21935B]/30"
                 />
               </label>
 
@@ -850,7 +850,7 @@ export default function Home() {
                   name="contactNumber"
                   placeholder="0917 000 0000"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-[#21935B]/70 focus:outline-none focus:ring-2 focus:ring-[#21935B]/30"
                 />
               </label>
 
@@ -861,7 +861,7 @@ export default function Home() {
                   name="address"
                   placeholder="House No., Street, City"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-[#21935B]/70 focus:outline-none focus:ring-2 focus:ring-[#21935B]/30"
                 />
               </label>
 
@@ -875,7 +875,7 @@ export default function Home() {
                     name="fulfillmentMethod"
                     value="pickup"
                     defaultChecked
-                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
+                    className="h-4 w-4 border-white/30 bg-white/10 text-[#21935B] focus:ring-[#21935B]/40"
                   />
                   Pickup
                 </label>
@@ -884,7 +884,7 @@ export default function Home() {
                     type="radio"
                     name="fulfillmentMethod"
                     value="delivery"
-                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
+                    className="h-4 w-4 border-white/30 bg-white/10 text-[#21935B] focus:ring-[#21935B]/40"
                   />
                   Delivery
                 </label>
@@ -900,7 +900,7 @@ export default function Home() {
                     name="paymentMethod"
                     value="gcash"
                     defaultChecked
-                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
+                    className="h-4 w-4 border-white/30 bg-white/10 text-[#21935B] focus:ring-[#21935B]/40"
                   />
                   GCash
                 </label>
@@ -916,7 +916,7 @@ export default function Home() {
                   name="gcashReference"
                   placeholder="0000000000"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-[#21935B]/70 focus:outline-none focus:ring-2 focus:ring-[#21935B]/30"
                 />
               </label>
 
@@ -932,12 +932,12 @@ export default function Home() {
               </label>
 
               {submitError ? (
-                <p className="text-xs uppercase tracking-[0.2em] text-amber-300">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#E47128]">
                   {submitError}
                 </p>
               ) : null}
               {submitSuccess ? (
-                <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#21935B]">
                   {submitSuccess}
                 </p>
               ) : null}
@@ -945,7 +945,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="mt-2 rounded-full bg-gradient-to-r from-teal-500 via-green-500 to-amber-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 rounded-full bg-[#00878F] px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#007078] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Submitting..." : "Submit Order"}
               </button>
@@ -963,12 +963,12 @@ export default function Home() {
               : "pointer-events-none scale-95 opacity-0"
           }`}
         >
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/50 bg-emerald-300/15">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-[#21935B]/50 bg-[#21935B]/15">
             <svg
               viewBox="0 0 24 24"
               fill="none"
               aria-hidden="true"
-              className="h-7 w-7 text-emerald-300"
+              className="h-7 w-7 text-[#21935B]"
             >
               <path
                 d="M5 12.5l4.5 4.5L19 7.5"
@@ -1031,12 +1031,12 @@ export default function Home() {
         </aside>
 
         {cartToast ? (
-          <div className="cart-toast pointer-events-none fixed bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-300/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-100 shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:right-6 md:left-auto md:translate-x-0">
+          <div className="cart-toast pointer-events-none fixed bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#21935B]/40 bg-[#21935B]/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/90 shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:right-6 md:left-auto md:translate-x-0">
             <svg
               viewBox="0 0 24 24"
               fill="none"
               aria-hidden="true"
-              className="h-4 w-4 text-emerald-300"
+              className="h-4 w-4 text-[#21935B]"
             >
               <path
                 d="M5 12.5l4.5 4.5L19 7.5"
