@@ -1,35 +1,42 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050b0e;
+  --foreground: #f0ece6;
   --ink: #0a1116;
   --deep-teal: #0a2a2d;
   --teal: #0a7a7a;
   --green: #1ea66b;
   --amber: #f08a1a;
-  --mist: rgba(255, 255, 255, 0.14);
-  --glow: rgba(21, 180, 173, 0.35);
+  --muted: rgba(240, 236, 230, 0.45);
+  --muted-foreground: rgba(240, 236, 230, 0.6);
+  --border: rgba(240, 236, 230, 0.1);
+  --border-hover: rgba(240, 236, 230, 0.25);
+  --card: rgba(240, 236, 230, 0.03);
+  --card-foreground: #f0ece6;
+  --accent: #0a7a7a;
+  --accent-foreground: #f0ece6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sora);
-  --font-display: var(--font-bebas);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-cormorant);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sora), sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -43,74 +50,84 @@ input[type="number"] {
   appearance: textfield;
 }
 
+/* Luxury serif display type */
 .font-display {
-  font-family: var(--font-bebas), sans-serif;
-  letter-spacing: 0.02em;
+  font-family: var(--font-cormorant), 'Georgia', serif;
+  font-weight: 300;
+  letter-spacing: -0.02em;
 }
 
+/* Editorial glass panel - more subtle for luxury feel */
 .glass-panel {
-  background: linear-gradient(135deg, rgba(8, 28, 31, 0.9), rgba(9, 36, 44, 0.75));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  background: var(--card);
+  border: 1px solid var(--border);
 }
 
+.glass-panel:hover {
+  border-color: var(--border-hover);
+}
+
+/* Refined entrance animation */
 .fade-up {
-  animation: fadeUp 700ms ease-out both;
+  animation: fadeUp 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .fade-delay-1 {
-  animation-delay: 120ms;
+  animation-delay: 150ms;
 }
 
 .fade-delay-2 {
-  animation-delay: 240ms;
+  animation-delay: 300ms;
 }
 
 .fade-delay-3 {
-  animation-delay: 360ms;
+  animation-delay: 450ms;
 }
 
 .cart-toast {
-  animation: cartToastIn 220ms ease-out both, cartToastOut 220ms ease-in both;
+  animation: cartToastIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both, cartToastOut 280ms ease-in both;
   animation-delay: 0ms, 1900ms;
 }
 
 .checkout-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(10, 122, 122, 0.8) rgba(255, 255, 255, 0.08);
+  scrollbar-color: rgba(10, 122, 122, 0.5) rgba(255, 255, 255, 0.04);
 }
 
 .checkout-scroll::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 
 .checkout-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .checkout-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(10, 122, 122, 0.95),
-    rgba(30, 166, 107, 0.85)
-  );
+  background: rgba(10, 122, 122, 0.5);
   border-radius: 999px;
-  border: 2px solid rgba(5, 11, 14, 0.9);
 }
 
 .checkout-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 122, 122, 0.7);
+}
+
+/* Luxury divider line */
+.luxury-divider {
+  height: 1px;
   background: linear-gradient(
-    180deg,
-    rgba(10, 122, 122, 1),
-    rgba(240, 138, 26, 0.85)
+    90deg,
+    transparent 0%,
+    var(--border) 20%,
+    var(--border-hover) 50%,
+    var(--border) 80%,
+    transparent 100%
   );
 }
 
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;

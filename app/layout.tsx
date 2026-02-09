@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Sora } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
-  variable: "--font-sora",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const bebasNeue = Bebas_Neue({
-  variable: "--font-bebas",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "Arduino Day Philippines 2026 Merch",
-  description: "Merch interest and order form for Arduino Day Philippines 2026.",
+  title: "ADPH 2026 | Collection",
+  description: "Exclusive merch collection for Arduino Day Philippines 2026.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sora.variable} ${bebasNeue.variable} antialiased`}>
+      <body className={`${inter.variable} ${cormorant.variable} antialiased`}>
         {children}
       </body>
     </html>

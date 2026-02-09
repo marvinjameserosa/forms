@@ -92,7 +92,7 @@ export default function Home() {
       }
 
       if (error) {
-        setMerchError("Unable to load merch right now.");
+        setMerchError("Unable to load collection.");
         setMerchItems([]);
       } else {
         setMerchError(null);
@@ -284,7 +284,7 @@ export default function Home() {
     });
 
     setQuantities((prev) => prev.map((qty, i) => (i === index ? 0 : qty)));
-    setCartToast(`${merchItem.name} added to cart`);
+    setCartToast(`${merchItem.name} added to bag`);
   };
 
   const removeFromCart = (index: number) => {
@@ -302,7 +302,7 @@ export default function Home() {
     setSubmitSuccess(null);
 
     if (cartItems.length === 0) {
-      setSubmitError("Add items to your cart before submitting.");
+      setSubmitError("Add items to your bag before submitting.");
       return;
     }
 
@@ -321,7 +321,7 @@ export default function Home() {
     const receiptFile = formData.get("gcashReceipt");
 
     if (!fullName || !email || !phone || !address) {
-      setSubmitError("Please complete all contact fields.");
+      setSubmitError("Please complete all fields.");
       return;
     }
 
@@ -331,7 +331,7 @@ export default function Home() {
     }
 
     if (fulfillmentMethod !== "pickup" && fulfillmentMethod !== "delivery") {
-      setSubmitError("Select pickup or delivery for your order.");
+      setSubmitError("Select pickup or delivery.");
       return;
     }
 
@@ -341,17 +341,17 @@ export default function Home() {
     }
 
     if (!(receiptFile instanceof File) || receiptFile.size === 0) {
-      setSubmitError("Upload your GCash receipt screenshot.");
+      setSubmitError("Upload your GCash receipt.");
       return;
     }
 
     if (!receiptFile.type.startsWith("image/")) {
-      setSubmitError("Receipt screenshot must be an image file.");
+      setSubmitError("Receipt must be an image file.");
       return;
     }
 
     if (receiptFile.size > MAX_RECEIPT_SIZE) {
-      setSubmitError("Receipt image must be 5MB or smaller.");
+      setSubmitError("Receipt image must be under 5MB.");
       return;
     }
 
@@ -413,255 +413,294 @@ export default function Home() {
     setCartItems([]);
     setQuantities((prev) => prev.map(() => 0));
     form.reset();
-    setSubmitSuccess("Order received! We'll verify your GCash receipt.");
+    setSubmitSuccess("Order placed successfully.");
     setCheckoutOpen(false);
     setConfirmationOpen(true);
     setSubmitting(false);
   };
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050b0e] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      {/* Subtle ambient lighting - toned down for luxury */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 left-[-10%] h-96 w-96 rounded-full bg-[radial-gradient(circle_at_center,rgba(11,122,122,0.5),transparent_70%)] blur-3xl" />
-        <div className="absolute top-20 right-[-8%] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(240,138,26,0.45),transparent_70%)] blur-3xl" />
-        <div className="absolute bottom-[-12%] left-[30%] h-96 w-96 rounded-full bg-[radial-gradient(circle_at_center,rgba(30,166,107,0.45),transparent_70%)] blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_60%)]" />
+        <div className="absolute -top-60 left-[-15%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_at_center,rgba(10,122,122,0.15),transparent_70%)] blur-3xl" />
+        <div className="absolute top-40 right-[-12%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_at_center,rgba(240,138,26,0.1),transparent_70%)] blur-3xl" />
+        <div className="absolute bottom-[-15%] left-[25%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_at_center,rgba(30,166,107,0.1),transparent_70%)] blur-3xl" />
       </div>
 
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 py-16">
-        <header className="flex flex-col gap-8">
-          <div className="fade-up inline-flex flex-wrap items-center justify-center gap-4 text-xs uppercase tracking-[0.2em] text-white/70">
-            <span className="flex items-center gap-2">
-              <span className="inline-flex h-2 w-2 rounded-full bg-amber-400" />
-              March 21, 2026
-            </span>
-            <span className="h-3 w-px bg-white/20" />
-            <span>Asia Pacific College, Makati</span>
-          </div>
-
-          <div className="fade-up fade-delay-1 flex flex-col items-center gap-6 text-center">
-            <div>
-              <h1 className="font-display text-5xl leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-                <span className="block text-teal-400">Arduino Day</span>
-                <span className="block text-green-400">Philippines</span>
-                <span className="block text-white">2026 Merch</span>
-              </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-white/75">
-                A clothing capsule for builders, creators, and tinkerers. Pick
-                your pieces, then scroll to place an order.
-              </p>
-            </div>
-          </div>
-
-          <div className="fade-up fade-delay-2 flex flex-wrap justify-center gap-4">
-            <a
-              href="#order-form"
-              className="rounded-full bg-gradient-to-r from-teal-500 via-green-500 to-amber-400 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-black transition hover:brightness-110"
-            >
-              Order Now
-            </a>
-            <button
-              type="button"
-              onClick={() => setSizeGuideOpen(true)}
-              className="rounded-full border border-white/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/40 hover:text-white"
-            >
-              View Sizing Guide
-            </button>
-            <button
-              type="button"
-              onClick={() => setCartOpen(true)}
-              className="relative rounded-full border border-white/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/40 hover:text-white"
-            >
-              Cart
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-amber-400 px-1 text-[0.6rem] font-semibold text-black">
+      {/* Navigation bar */}
+      <nav className="fade-up relative z-20 flex items-center justify-between px-6 py-6 lg:px-12">
+        <span className="font-serif text-2xl font-light tracking-wide text-foreground">
+          ADPH
+        </span>
+        <div className="flex items-center gap-6">
+          <button
+            type="button"
+            onClick={() => setSizeGuideOpen(true)}
+            className="text-xs font-light uppercase tracking-[0.2em] text-foreground/50 transition hover:text-foreground"
+          >
+            Size Guide
+          </button>
+          <button
+            type="button"
+            onClick={() => setCartOpen(true)}
+            className="relative text-xs font-light uppercase tracking-[0.2em] text-foreground/50 transition hover:text-foreground"
+          >
+            Bag
+            {cartCount > 0 && (
+              <span className="absolute -right-4 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--teal)] px-1 text-[0.55rem] font-medium text-foreground">
                 {cartCount}
               </span>
-            </button>
+            )}
+          </button>
+        </div>
+      </nav>
+
+      <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-6 pb-20 lg:px-12">
+        {/* Hero Section - editorial luxury */}
+        <header className="flex flex-col items-center py-16 lg:py-24">
+          <div className="fade-up text-center">
+            <p className="text-[0.65rem] font-light uppercase tracking-[0.35em] text-foreground/40">
+              March 21, 2026 &mdash; Asia Pacific College, Makati
+            </p>
+          </div>
+
+          <div className="fade-up fade-delay-1 mt-8 flex flex-col items-center text-center">
+            <h1 className="font-serif text-6xl font-light leading-[1.05] text-foreground sm:text-7xl lg:text-[6.5rem]">
+              <span className="block text-balance">Arduino Day</span>
+              <span className="block italic text-[var(--teal)]">Philippines</span>
+              <span className="block text-balance">2026</span>
+            </h1>
+            <div className="luxury-divider mx-auto mt-10 w-16" />
+            <p className="mt-8 max-w-lg text-sm font-light leading-relaxed text-foreground/50">
+              A curated capsule for builders, creators, and tinkerers.
+              Explore the collection below.
+            </p>
+          </div>
+
+          <div className="fade-up fade-delay-2 mt-10 flex items-center gap-6">
+            <a
+              href="#collection"
+              className="border-b border-foreground/30 pb-1 text-xs font-light uppercase tracking-[0.25em] text-foreground/70 transition hover:border-foreground hover:text-foreground"
+            >
+              Shop Collection
+            </a>
+            <span className="text-foreground/15">|</span>
+            <a
+              href="#order-form"
+              className="border-b border-foreground/30 pb-1 text-xs font-light uppercase tracking-[0.25em] text-foreground/70 transition hover:border-foreground hover:text-foreground"
+            >
+              Place Order
+            </a>
           </div>
         </header>
 
-        <section className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {merchLoading ? (
-            <div className="glass-panel fade-up rounded-3xl p-6 md:col-span-2 lg:col-span-3">
-              <p className="text-sm text-white/70">Loading merch...</p>
-            </div>
-          ) : merchError ? (
-            <div className="glass-panel fade-up rounded-3xl p-6 md:col-span-2 lg:col-span-3">
-              <p className="text-sm text-amber-200">{merchError}</p>
-            </div>
-          ) : merchItems.length === 0 ? (
-            <div className="glass-panel fade-up rounded-3xl p-6 md:col-span-2 lg:col-span-3">
-              <p className="text-sm text-white/70">
-                No merch is available yet.
-              </p>
-            </div>
-          ) : (
-            merchItems.map((item, index) => (
-              <article
-                key={item.id}
-                className="glass-panel fade-up rounded-3xl p-7"
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPreviewImage({ src: item.image, alt: item.name })
-                  }
-                  className={`relative h-52 w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${item.tone}`}
-                  aria-label={`View ${item.name} image`}
+        {/* Collection Grid */}
+        <section id="collection" className="scroll-mt-8">
+          <div className="fade-up mb-12 flex items-center gap-6">
+            <div className="luxury-divider flex-1" />
+            <h2 className="font-serif text-lg font-light tracking-wide text-foreground/60">
+              The Collection
+            </h2>
+            <div className="luxury-divider flex-1" />
+          </div>
+
+          <div className="grid gap-px bg-border md:grid-cols-2 xl:grid-cols-3">
+            {merchLoading ? (
+              <div className="fade-up bg-background p-12 md:col-span-2 xl:col-span-3">
+                <p className="text-center text-xs font-light uppercase tracking-[0.2em] text-foreground/40">
+                  Loading collection...
+                </p>
+              </div>
+            ) : merchError ? (
+              <div className="fade-up bg-background p-12 md:col-span-2 xl:col-span-3">
+                <p className="text-center text-xs font-light uppercase tracking-[0.2em] text-[var(--amber)]">
+                  {merchError}
+                </p>
+              </div>
+            ) : merchItems.length === 0 ? (
+              <div className="fade-up bg-background p-12 md:col-span-2 xl:col-span-3">
+                <p className="text-center text-xs font-light uppercase tracking-[0.2em] text-foreground/40">
+                  Collection coming soon.
+                </p>
+              </div>
+            ) : (
+              merchItems.map((item, index) => (
+                <article
+                  key={item.id}
+                  className="fade-up group flex flex-col bg-background"
                 >
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-                </button>
-                <div className="mt-5 flex items-start justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-white/60">{item.tag}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/50">
-                      Price
-                    </p>
-                    <p className="text-lg font-semibold text-white">
-                      PHP {(item.price ?? 0).toFixed(0)}
-                    </p>
-                  </div>
-                </div>
-                {item.sizes.length === 1 ? (
-                  <div className="mt-4">
-                    <span className="inline-flex rounded-full border border-emerald-300/40 bg-emerald-300/15 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-emerald-100">
-                      {item.sizes[0]}
+                  {/* Product image - tall editorial crop */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setPreviewImage({ src: item.image, alt: item.name })
+                    }
+                    className={`relative aspect-[3/4] w-full overflow-hidden bg-[#0a1116]`}
+                    aria-label={`View ${item.name}`}
+                  >
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050b0e]/60 via-transparent to-transparent" />
+                    {/* Tag overlay */}
+                    <span className="absolute bottom-4 left-4 text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/60">
+                      {item.tag}
                     </span>
-                  </div>
-                ) : (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {item.sizes.map((size) => {
-                      const isSelected = selectedSizes[index] === size;
-                      return (
+                  </button>
+
+                  {/* Product details */}
+                  <div className="flex flex-col gap-5 p-6">
+                    <div className="flex items-baseline justify-between">
+                      <h3 className="font-serif text-xl font-light text-foreground">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm font-light tabular-nums text-foreground/70">
+                        PHP {(item.price ?? 0).toFixed(0)}
+                      </p>
+                    </div>
+
+                    {/* Size selector */}
+                    {item.sizes.length === 1 ? (
+                      <div>
+                        <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                          {item.sizes[0]}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {item.sizes.map((size) => {
+                          const isSelected = selectedSizes[index] === size;
+                          return (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => selectSize(index, size)}
+                              className={`border px-3 py-1.5 text-[0.6rem] uppercase tracking-[0.25em] transition ${
+                                isSelected
+                                  ? "border-foreground/60 bg-foreground/10 text-foreground"
+                                  : "border-border text-foreground/40 hover:border-foreground/30 hover:text-foreground/70"
+                              }`}
+                              aria-pressed={isSelected}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Quantity + Add to bag */}
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 border border-border px-3 py-1.5">
                         <button
-                          key={size}
                           type="button"
-                          onClick={() => selectSize(index, size)}
-                          className={`rounded-full border px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] transition ${
-                            isSelected
-                              ? "border-emerald-300/80 bg-emerald-300/20 text-emerald-100"
-                              : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
-                          }`}
-                          aria-pressed={isSelected}
+                          onClick={() => adjustQuantity(index, -1)}
+                          className="flex h-6 w-6 items-center justify-center text-sm text-foreground/40 transition hover:text-foreground"
                         >
-                          {size}
+                          -
                         </button>
-                      );
-                    })}
-                  </div>
-                )}
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex flex-1 items-center justify-between gap-2 rounded-full border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.2em] text-white/60">
-                    <span>Qty</span>
-                    <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={0}
+                          value={quantities[index] ?? 0}
+                          onChange={(event) =>
+                            updateQuantity(index, Number(event.target.value))
+                          }
+                          className="w-8 bg-transparent text-center text-xs text-foreground focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => adjustQuantity(index, 1)}
+                          className="flex h-6 w-6 items-center justify-center text-sm text-foreground/40 transition hover:text-foreground"
+                        >
+                          +
+                        </button>
+                      </div>
                       <button
                         type="button"
-                        onClick={() => adjustQuantity(index, -1)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-base text-white/70 transition hover:border-white/40 hover:text-white"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        min={0}
-                        value={quantities[index] ?? 0}
-                        onChange={(event) =>
-                          updateQuantity(index, Number(event.target.value))
+                        onClick={() => addToCart(index)}
+                        disabled={
+                          quantities[index] <= 0 || selectedSizes[index] === null
                         }
-                        className="w-12 bg-transparent text-center text-sm text-white focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => adjustQuantity(index, 1)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-base text-white/70 transition hover:border-white/40 hover:text-white"
+                        className="flex-1 border border-foreground/20 bg-transparent py-2 text-[0.6rem] uppercase tracking-[0.25em] text-foreground/70 transition hover:border-foreground/50 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
                       >
-                        +
+                        Add to Bag
                       </button>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => addToCart(index)}
-                    disabled={
-                      quantities[index] <= 0 || selectedSizes[index] === null
-                    }
-                    className="flex-1 rounded-full bg-white/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </article>
-            ))
-          )}
+                </article>
+              ))
+            )}
+          </div>
         </section>
 
+        {/* Overlays */}
         <div
-          className={`fixed inset-0 z-20 bg-black/60 transition ${
+          className={`fixed inset-0 z-20 bg-[#050b0e]/80 backdrop-blur-sm transition duration-300 ${
             cartOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => setCartOpen(false)}
         />
         <div
-          className={`fixed inset-0 z-20 bg-black/60 transition ${
+          className={`fixed inset-0 z-20 bg-[#050b0e]/80 backdrop-blur-sm transition duration-300 ${
             sizeGuideOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => setSizeGuideOpen(false)}
         />
         <div
-          className={`fixed inset-0 z-20 bg-black/60 transition ${
+          className={`fixed inset-0 z-20 bg-[#050b0e]/80 backdrop-blur-sm transition duration-300 ${
             checkoutOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => setCheckoutOpen(false)}
         />
         <div
-          className={`fixed inset-0 z-20 bg-black/60 transition ${
+          className={`fixed inset-0 z-20 bg-[#050b0e]/80 backdrop-blur-sm transition duration-300 ${
             confirmationOpen ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => setConfirmationOpen(false)}
         />
         <div
-          className={`fixed inset-0 z-20 bg-black/70 transition ${
+          className={`fixed inset-0 z-20 bg-[#050b0e]/90 transition duration-300 ${
             previewImage ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
           onClick={() => setPreviewImage(null)}
         />
+
+        {/* Size Guide Modal */}
         <aside
           role="dialog"
           aria-modal="true"
           aria-hidden={!sizeGuideOpen}
-          className={`fixed left-1/2 top-1/2 z-30 max-h-[85vh] w-[92%] max-w-4xl -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded-3xl border border-white/10 bg-[#050b0e] p-6 transition duration-300 ${
+          className={`fixed left-1/2 top-1/2 z-30 max-h-[85vh] w-[92%] max-w-4xl -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto border border-border bg-background p-8 transition duration-300 ${
             sizeGuideOpen
               ? "scale-100 opacity-100"
-              : "pointer-events-none scale-95 opacity-0"
+              : "pointer-events-none scale-[0.98] opacity-0"
           }`}
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Sizing Guide</h3>
+            <h3 className="font-serif text-2xl font-light text-foreground">
+              Size Guide
+            </h3>
             <button
               type="button"
               onClick={() => setSizeGuideOpen(false)}
-              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
+              className="text-xs font-light uppercase tracking-[0.2em] text-foreground/40 transition hover:text-foreground"
             >
               Close
             </button>
           </div>
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4">
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+          <div className="luxury-divider mt-6" />
+          <div className="mt-6 grid gap-6 md:grid-cols-2">
+            <div className="border border-border p-5">
+              <h4 className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
                 Shirt Sizing
               </h4>
-              <div className="relative mt-3 aspect-[4/3] w-full">
+              <div className="relative mt-4 aspect-[4/3] w-full">
                 <Image
                   src="/shirt_size.png"
                   alt="Shirt sizing guide"
@@ -671,11 +710,11 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4">
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+            <div className="border border-border p-5">
+              <h4 className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
                 Vest Sizing
               </h4>
-              <div className="relative mt-3 aspect-[4/3] w-full">
+              <div className="relative mt-4 aspect-[4/3] w-full">
                 <Image
                   src="/vest_size.png"
                   alt="Vest sizing guide"
@@ -687,36 +726,43 @@ export default function Home() {
             </div>
           </div>
         </aside>
+
+        {/* Cart Drawer */}
         <aside
-          className={`checkout-scroll fixed right-0 top-0 z-30 h-full w-full max-w-md transform overflow-y-auto border-l border-white/10 bg-[#050b0e] p-6 transition duration-300 ${
+          className={`checkout-scroll fixed right-0 top-0 z-30 h-full w-full max-w-md transform overflow-y-auto border-l border-border bg-background p-8 transition duration-300 ${
             cartOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Your Cart</h3>
+            <h3 className="font-serif text-2xl font-light text-foreground">
+              Your Bag
+            </h3>
             <button
               type="button"
               onClick={() => setCartOpen(false)}
-              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
+              className="text-xs font-light uppercase tracking-[0.2em] text-foreground/40 transition hover:text-foreground"
             >
               Close
             </button>
           </div>
+          <div className="luxury-divider mt-6" />
 
           <div className="mt-6 flex flex-col gap-4">
             {cartItems.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/20 px-4 py-8 text-center text-sm text-white/60">
-                Your cart is empty.
+              <div className="py-16 text-center">
+                <p className="font-serif text-lg font-light italic text-foreground/30">
+                  Your bag is empty
+                </p>
               </div>
             ) : (
               cartItems.map((item, index) => (
                 <div
                   key={`${item.name}-${item.size}-${index}`}
-                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                  className="flex items-center justify-between border-b border-border pb-4"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {item.image ? (
-                      <div className="relative h-12 w-12 overflow-hidden rounded-xl border border-white/10">
+                      <div className="relative h-16 w-12 overflow-hidden bg-[#0a1116]">
                         <Image
                           src={item.image}
                           alt={item.name}
@@ -727,18 +773,21 @@ export default function Home() {
                       </div>
                     ) : null}
                     <div>
-                      <p className="text-sm font-semibold text-white">
+                      <p className="text-sm font-light text-foreground">
                         {item.name}
                       </p>
-                      <p className="text-xs text-white/60">
-                        Size {item.size} · Qty {item.quantity}
+                      <p className="mt-0.5 text-[0.65rem] font-light text-foreground/40">
+                        {item.size} &mdash; Qty {item.quantity}
+                      </p>
+                      <p className="mt-0.5 text-xs font-light text-foreground/60">
+                        PHP {(item.price * item.quantity).toFixed(0)}
                       </p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeFromCart(index)}
-                    className="rounded-full border border-white/20 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
+                    className="text-[0.6rem] font-light uppercase tracking-[0.2em] text-foreground/30 transition hover:text-foreground"
                   >
                     Remove
                   </button>
@@ -747,196 +796,225 @@ export default function Home() {
             )}
           </div>
 
-          <div className="mt-6 flex items-center justify-between">
-            <span className="text-xs uppercase tracking-[0.2em] text-white/60">
-              Items
-            </span>
-            <span className="text-sm font-semibold text-white">{cartCount}</span>
-          </div>
+          {cartItems.length > 0 && (
+            <>
+              <div className="luxury-divider mt-6" />
+              <div className="mt-6 flex items-center justify-between">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Total
+                </span>
+                <span className="font-serif text-lg font-light text-foreground">
+                  PHP {cartSubtotal.toFixed(0)}
+                </span>
+              </div>
 
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-xs uppercase tracking-[0.2em] text-white/60">
-              Subtotal
-            </span>
-            <span className="text-sm font-semibold text-white">
-              PHP {cartSubtotal.toFixed(0)}
-            </span>
-          </div>
-
-          <div className="mt-6 flex flex-col gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setCartOpen(false);
-                setCheckoutOpen(true);
-              }}
-              className="rounded-full bg-gradient-to-r from-teal-500 via-green-500 to-amber-400 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-black transition hover:brightness-110"
-            >
-              Checkout
-            </button>
-            <button
-              type="button"
-              onClick={clearCart}
-              className="rounded-full border border-white/20 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/40 hover:text-white"
-              disabled={cartItems.length === 0}
-            >
-              Clear Cart
-            </button>
-          </div>
+              <div className="mt-8 flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCartOpen(false);
+                    setCheckoutOpen(true);
+                  }}
+                  className="w-full bg-foreground py-3.5 text-[0.65rem] font-light uppercase tracking-[0.25em] text-background transition hover:bg-foreground/90"
+                >
+                  Proceed to Checkout
+                </button>
+                <button
+                  type="button"
+                  onClick={clearCart}
+                  className="w-full border border-border py-3 text-[0.65rem] font-light uppercase tracking-[0.25em] text-foreground/50 transition hover:border-foreground/30 hover:text-foreground"
+                  disabled={cartItems.length === 0}
+                >
+                  Clear Bag
+                </button>
+              </div>
+            </>
+          )}
         </aside>
 
+        {/* Checkout Modal */}
         <aside
           role="dialog"
           aria-modal="true"
           aria-hidden={!checkoutOpen}
-          className={`checkout-scroll fixed left-1/2 top-1/2 z-30 max-h-[85vh] w-[92%] max-w-4xl -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded-3xl border border-white/10 bg-[#050b0e] p-6 transition duration-300 ${
+          className={`checkout-scroll fixed left-1/2 top-1/2 z-30 max-h-[85vh] w-[92%] max-w-4xl -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto border border-border bg-background p-8 transition duration-300 ${
             checkoutOpen
               ? "scale-100 opacity-100"
-              : "pointer-events-none scale-95 opacity-0"
+              : "pointer-events-none scale-[0.98] opacity-0"
           }`}
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Place Your Order</h3>
+            <h3 className="font-serif text-2xl font-light text-foreground">
+              Checkout
+            </h3>
             <button
               type="button"
               onClick={() => setCheckoutOpen(false)}
-              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
+              className="text-xs font-light uppercase tracking-[0.2em] text-foreground/40 transition hover:text-foreground"
             >
               Close
             </button>
           </div>
-          <div className="mt-4 grid gap-8 lg:grid-cols-[1.1fr_1fr]">
+          <div className="luxury-divider mt-6" />
+          <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1.1fr]">
             <div>
-              <p className="text-sm leading-6 text-white/70">
-                Fill up the form and attach your GCash receipt to confirm your
-                merch order.
+              <p className="font-serif text-lg font-light italic text-foreground/50">
+                Complete your details and attach your GCash receipt to confirm
+                your order.
               </p>
-              <div className="mt-6 grid gap-4 text-xs uppercase tracking-[0.25em] text-white/60">
-                <div className="flex items-center gap-3">
-                  <span className="h-2 w-2 rounded-full bg-amber-400" />
-                  Limited quantities
+              <div className="luxury-divider mt-6" />
+              <div className="mt-6">
+                <p className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/30">
+                  Order Summary
+                </p>
+                <div className="mt-4 flex flex-col gap-2">
+                  {cartItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs text-foreground/60">
+                      <span>{item.name} ({item.size}) x{item.quantity}</span>
+                      <span>PHP {(item.price * item.quantity).toFixed(0)}</span>
+                    </div>
+                  ))}
+                  <div className="luxury-divider mt-2" />
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">Total</span>
+                    <span className="font-serif text-base text-foreground">PHP {cartSubtotal.toFixed(0)}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
             <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-              <label className="text-sm text-white/80">
-                Full Name
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Full Name
+                </span>
                 <input
                   type="text"
                   name="fullName"
                   placeholder="Juan Dela Cruz"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="border-b border-border bg-transparent pb-2 text-sm font-light text-foreground placeholder:text-foreground/20 focus:border-foreground/40 focus:outline-none"
                 />
               </label>
 
-              <label className="text-sm text-white/80">
-                Email
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Email
+                </span>
                 <input
                   type="email"
                   name="email"
                   placeholder="you@email.com"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="border-b border-border bg-transparent pb-2 text-sm font-light text-foreground placeholder:text-foreground/20 focus:border-foreground/40 focus:outline-none"
                 />
               </label>
 
-              <label className="text-sm text-white/80">
-                Contact Number
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Contact Number
+                </span>
                 <input
                   type="tel"
                   name="contactNumber"
                   placeholder="0917 000 0000"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="border-b border-border bg-transparent pb-2 text-sm font-light text-foreground placeholder:text-foreground/20 focus:border-foreground/40 focus:outline-none"
                 />
               </label>
 
-              <label className="text-sm text-white/80">
-                Address
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Address
+                </span>
                 <input
                   type="text"
                   name="address"
                   placeholder="House No., Street, City"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="border-b border-border bg-transparent pb-2 text-sm font-light text-foreground placeholder:text-foreground/20 focus:border-foreground/40 focus:outline-none"
                 />
               </label>
 
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/60">
-                  Fulfillment Method
+              <div className="border border-border p-5">
+                <p className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Fulfillment
                 </p>
-                <label className="mt-3 flex items-center gap-3 text-sm text-white/80">
-                  <input
-                    type="radio"
-                    name="fulfillmentMethod"
-                    value="pickup"
-                    defaultChecked
-                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
-                  />
-                  Pickup
-                </label>
-                <label className="mt-2 flex items-center gap-3 text-sm text-white/80">
-                  <input
-                    type="radio"
-                    name="fulfillmentMethod"
-                    value="delivery"
-                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
-                  />
-                  Delivery
-                </label>
+                <div className="mt-4 flex gap-4">
+                  <label className="flex items-center gap-2 text-xs font-light text-foreground/60 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="fulfillmentMethod"
+                      value="pickup"
+                      defaultChecked
+                      className="h-3.5 w-3.5 border-foreground/20 bg-transparent text-[var(--teal)] focus:ring-[var(--teal)]/30"
+                    />
+                    Pickup
+                  </label>
+                  <label className="flex items-center gap-2 text-xs font-light text-foreground/60 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="fulfillmentMethod"
+                      value="delivery"
+                      className="h-3.5 w-3.5 border-foreground/20 bg-transparent text-[var(--teal)] focus:ring-[var(--teal)]/30"
+                    />
+                    Delivery
+                  </label>
+                </div>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/60">
-                  Payment Method
+              <div className="border border-border p-5">
+                <p className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Payment
                 </p>
-                <label className="mt-3 flex items-center gap-3 text-sm text-white/80">
+                <label className="mt-4 flex items-center gap-2 text-xs font-light text-foreground/60 cursor-pointer">
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="gcash"
                     defaultChecked
-                    className="h-4 w-4 border-white/30 bg-white/10 text-emerald-300 focus:ring-emerald-300/40"
+                    className="h-3.5 w-3.5 border-foreground/20 bg-transparent text-[var(--teal)] focus:ring-[var(--teal)]/30"
                   />
                   GCash
                 </label>
-                <p className="mt-2 text-xs text-white/60">
-                  Upload your GCash receipt before confirming the order.
+                <p className="mt-2 text-[0.6rem] font-light text-foreground/30">
+                  Attach your receipt screenshot below.
                 </p>
               </div>
 
-              <label className="text-sm text-white/80">
-                GCash Reference No.
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  GCash Reference No.
+                </span>
                 <input
                   type="text"
                   name="gcashReference"
                   placeholder="0000000000"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-300/70 focus:outline-none focus:ring-2 focus:ring-emerald-300/30"
+                  className="border-b border-border bg-transparent pb-2 text-sm font-light text-foreground placeholder:text-foreground/20 focus:border-foreground/40 focus:outline-none"
                 />
               </label>
 
-              <label className="text-sm text-white/80">
-                GCash Receipt Screenshot
+              <label className="flex flex-col gap-2">
+                <span className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+                  Receipt Screenshot
+                </span>
                 <input
                   type="file"
                   name="gcashReceipt"
                   accept="image/*"
                   required
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white file:mr-3 file:rounded-full file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-xs file:uppercase file:tracking-[0.2em] file:text-white/80"
+                  className="text-xs font-light text-foreground/50 file:mr-3 file:border file:border-border file:bg-transparent file:px-4 file:py-2 file:text-[0.6rem] file:uppercase file:tracking-[0.2em] file:text-foreground/50 file:cursor-pointer hover:file:border-foreground/30 hover:file:text-foreground"
                 />
               </label>
 
               {submitError ? (
-                <p className="text-xs uppercase tracking-[0.2em] text-amber-300">
+                <p className="text-[0.65rem] font-light uppercase tracking-[0.15em] text-[var(--amber)]">
                   {submitError}
                 </p>
               ) : null}
               {submitSuccess ? (
-                <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">
+                <p className="text-[0.65rem] font-light uppercase tracking-[0.15em] text-[var(--green)]">
                   {submitSuccess}
                 </p>
               ) : null}
@@ -944,78 +1022,81 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="mt-2 rounded-full bg-gradient-to-r from-teal-500 via-green-500 to-amber-400 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-4 w-full bg-foreground py-3.5 text-[0.65rem] font-light uppercase tracking-[0.25em] text-background transition hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {submitting ? "Submitting..." : "Submit Order"}
+                {submitting ? "Placing Order..." : "Place Order"}
               </button>
             </form>
           </div>
         </aside>
 
+        {/* Confirmation Modal */}
         <aside
           role="dialog"
           aria-modal="true"
           aria-hidden={!confirmationOpen}
-          className={`fixed left-1/2 top-1/2 z-30 w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 transform rounded-3xl border border-white/10 bg-[#050b0e] p-6 text-center transition duration-300 ${
+          className={`fixed left-1/2 top-1/2 z-30 w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 transform border border-border bg-background p-10 text-center transition duration-300 ${
             confirmationOpen
               ? "scale-100 opacity-100"
-              : "pointer-events-none scale-95 opacity-0"
+              : "pointer-events-none scale-[0.98] opacity-0"
           }`}
         >
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/50 bg-emerald-300/15">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center border border-[var(--green)]/40">
             <svg
               viewBox="0 0 24 24"
               fill="none"
               aria-hidden="true"
-              className="h-7 w-7 text-emerald-300"
+              className="h-5 w-5 text-[var(--green)]"
             >
               <path
                 d="M5 12.5l4.5 4.5L19 7.5"
                 stroke="currentColor"
-                strokeWidth="2.2"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
           </div>
-          <h3 className="mt-4 text-lg font-semibold text-white">
-            Order submitted successfully
+          <h3 className="mt-6 font-serif text-2xl font-light text-foreground">
+            Order Confirmed
           </h3>
-          <p className="mt-2 text-sm text-white/70">
+          <p className="mt-3 text-xs font-light leading-relaxed text-foreground/50">
             We received your order and will verify your GCash receipt shortly.
           </p>
+          <div className="luxury-divider mx-auto mt-6 w-12" />
           <button
             type="button"
             onClick={() => setConfirmationOpen(false)}
-            className="mt-5 rounded-full border border-white/20 px-6 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-white/40 hover:text-white"
+            className="mt-6 border border-border px-8 py-2.5 text-[0.6rem] font-light uppercase tracking-[0.25em] text-foreground/60 transition hover:border-foreground/30 hover:text-foreground"
           >
-            Close
+            Continue Shopping
           </button>
         </aside>
 
+        {/* Image Preview Modal */}
         <aside
           role="dialog"
           aria-modal="true"
           aria-hidden={!previewImage}
-          className={`fixed left-1/2 top-1/2 z-30 w-[94%] max-w-5xl -translate-x-1/2 -translate-y-1/2 transform rounded-3xl border border-white/10 bg-[#050b0e] p-4 transition duration-300 ${
+          className={`fixed left-1/2 top-1/2 z-30 w-[94%] max-w-5xl -translate-x-1/2 -translate-y-1/2 transform border border-border bg-background p-4 transition duration-300 ${
             previewImage
               ? "scale-100 opacity-100"
-              : "pointer-events-none scale-95 opacity-0"
+              : "pointer-events-none scale-[0.98] opacity-0"
           }`}
         >
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
-              Image Preview
+          <div className="flex items-center justify-between px-2">
+            <h3 className="text-[0.6rem] font-light uppercase tracking-[0.3em] text-foreground/40">
+              Preview
             </h3>
             <button
               type="button"
               onClick={() => setPreviewImage(null)}
-              className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
+              className="text-xs font-light uppercase tracking-[0.2em] text-foreground/40 transition hover:text-foreground"
             >
               Close
             </button>
           </div>
-          <div className="relative mt-4 h-[70vh] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+          <div className="relative mt-3 h-[70vh] w-full overflow-hidden bg-[#0a1116]">
             {previewImage ? (
               <Image
                 src={previewImage.src}
@@ -1029,18 +1110,19 @@ export default function Home() {
           </div>
         </aside>
 
+        {/* Toast */}
         {cartToast ? (
-          <div className="cart-toast pointer-events-none fixed bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-300/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-100 shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:right-6 md:left-auto md:translate-x-0">
+          <div className="cart-toast pointer-events-none fixed bottom-8 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 border border-border bg-background px-6 py-3 text-[0.6rem] font-light uppercase tracking-[0.25em] text-foreground/70 md:right-8 md:left-auto md:translate-x-0">
             <svg
               viewBox="0 0 24 24"
               fill="none"
               aria-hidden="true"
-              className="h-4 w-4 text-emerald-300"
+              className="h-3.5 w-3.5 text-[var(--green)]"
             >
               <path
                 d="M5 12.5l4.5 4.5L19 7.5"
                 stroke="currentColor"
-                strokeWidth="2.2"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -1049,8 +1131,17 @@ export default function Home() {
           </div>
         ) : null}
 
-        <footer className="mt-8 border-t border-white/10 pt-6 text-center text-xs uppercase tracking-[0.2em] text-white/60">
-          Arduino Day Philippines 2026 · Merch Orders
+        {/* Footer */}
+        <footer className="mt-20">
+          <div className="luxury-divider" />
+          <div className="flex flex-col items-center gap-3 pt-8">
+            <span className="font-serif text-lg font-light tracking-wide text-foreground/30">
+              ADPH
+            </span>
+            <p className="text-[0.55rem] font-light uppercase tracking-[0.35em] text-foreground/20">
+              Arduino Day Philippines 2026
+            </p>
+          </div>
         </footer>
       </main>
     </div>
