@@ -99,24 +99,24 @@ export default function AdminPage() {
               lineTotal: Number(item?.line_total ?? item?.lineTotal ?? 0),
             }))
             .filter(
-              (item) =>
+              (item: OrderLine) =>
                 item.name &&
                 item.size &&
                 Number.isFinite(item.quantity) &&
                 item.quantity > 0,
             );
           const itemCount = items.reduce(
-            (sum, item) => sum + item.quantity,
+            (sum: number, item: OrderLine) => sum + item.quantity,
             0,
           );
           const subtotal = items.reduce(
-            (sum, item) => sum + item.lineTotal,
+            (sum: number, item: OrderLine) => sum + item.lineTotal,
             0,
           );
           const itemsSummary = items.length
             ? items
                 .map(
-                  (item) =>
+                  (item: OrderLine) =>
                     `${item.name} (${item.size}) x${item.quantity}`,
                 )
                 .join(" · ")
@@ -235,6 +235,8 @@ export default function AdminPage() {
     const headers = [
       "Order ID",
       "Customer",
+      "Email",
+      "Address",
       "Items",
       "Item Count",
       "Total",
@@ -245,7 +247,9 @@ export default function AdminPage() {
     const rows = filteredOrders.map((o) => [
       o.id,
       o.name,
-      o.itemsSummary,
+      o.email,
+      `"${o.address}"`,
+      `"${o.itemsSummary}"`,
       o.itemCount,
       o.subtotal,
       o.fulfillment,
@@ -368,29 +372,71 @@ export default function AdminPage() {
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-white/10 text-white/40">
                     <tr>
-                      <th className="pb-4">Order / Customer</th>
-                      <th className="pb-4">Items</th>
-                      <th className="pb-4">Total</th>
-                      <th className="pb-4">Fulfillment</th>
-                      <th className="pb-4">Status</th>
-                      <th className="pb-4">Date</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">
+                        Order / Customer
+                      </th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Email</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Address</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Items</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Total</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">
+                        Fulfillment
+                      </th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Status</th>
+                      <th className="pb-4 whitespace-nowrap">Date</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {filteredOrders.map((order) => (
                       <tr key={order.id}>
-                        <td className="py-4">
+                        <td className="py-4 whitespace-nowrap pr-4">
                           <div className="font-bold">{order.name}</div>
                           <div className="text-xs text-white/40">
                             {order.id}
                           </div>
                         </td>
-                        <td className="py-4 text-white/80">
-                          {order.itemsSummary}
+                        <td className="py-4 whitespace-nowrap text-white/80 pr-4">
+                          {order.email}
                         </td>
-                        <td className="py-4">PHP {order.subtotal}</td>
-                        <td className="py-4 capitalize">{order.fulfillment}</td>
-                        <td className="py-4">
+                        <td
+                          className="py-4 text-white/80 max-w-xs truncate pr-4"
+                          title={order.address}
+                        >
+                          {order.address}
+                        </td>
+                        <td className="py-4 text-white/80 min-w-[300px] pr-4">
+                          <div className="flex flex-col gap-1">
+                            {order.items.length > 0 ? (
+                              order.items.map((item, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center justify-between rounded bg-white/5 px-2 py-1 text-xs"
+                                >
+                                  <span className="truncate pr-2">
+                                    {item.name}{" "}
+                                    <span className="text-white/40">
+                                      ({item.size})
+                                    </span>
+                                  </span>
+                                  <span className="font-mono font-bold text-teal-200">
+                                    x{item.quantity}
+                                  </span>
+                                </div>
+                              ))
+                            ) : (
+                              <span className="text-white/40 italic">
+                                No items
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-4 whitespace-nowrap pr-4">
+                          PHP {order.subtotal}
+                        </td>
+                        <td className="py-4 whitespace-nowrap capitalize pr-4">
+                          {order.fulfillment}
+                        </td>
+                        <td className="py-4 whitespace-nowrap pr-4">
                           <select
                             value={order.status}
                             onChange={(e) =>
@@ -411,7 +457,7 @@ export default function AdminPage() {
                             ))}
                           </select>
                         </td>
-                        <td className="py-4 text-white/60">
+                        <td className="py-4 whitespace-nowrap text-white/60">
                           {formatDate(order.createdAt)}
                         </td>
                       </tr>
