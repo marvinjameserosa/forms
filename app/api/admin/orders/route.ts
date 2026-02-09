@@ -84,27 +84,27 @@ export async function PATCH(request: NextRequest) {
 
   const body = (await request.json().catch(() => null)) as {
     id?: string;
-    status?:
-      | "pending"
-      | "paid"
-      | "confirmed"
-      | "packing"
-      | "shipped"
-      | "intransit"
-      | "delivered"
-      | "cancelled";
+    status?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    items?: any[];
   } | null;
 
-  if (!body?.id || !body.status) {
-    return NextResponse.json(
-      { error: "Missing order id or status." },
-      { status: 400 },
-    );
+  if (!body?.id) {
+    return NextResponse.json({ error: "Missing order id." }, { status: 400 });
   }
+
+  const updates: any = {};
+  if (body.status) updates.status = body.status;
+  if (body.email) updates.email = body.email;
+  if (body.phone) updates.phone = body.phone;
+  if (body.address) updates.address = body.address;
+  if (body.items) updates.items = body.items;
 
   const { error } = await supabaseAdmin
     .from("orders")
-    .update({ status: body.status })
+    .update(updates)
     .eq("id", body.id);
 
   if (error) {

@@ -58,6 +58,8 @@ export default function AdminPage() {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState<string | null>(null);
   const [statusUpdatingId, setStatusUpdatingId] = useState<string | null>(null);
+  const [editingOrder, setEditingOrder] = useState<OrderItem | null>(null);
+  const [viewingReceipt, setViewingReceipt] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -231,15 +233,48 @@ export default function AdminPage() {
     setStatusUpdatingId(null);
   };
 
+  const handleSaveOrder = async (updatedOrder: OrderItem) => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+
+    const response = await fetch("/api/admin/orders", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        id: updatedOrder.id,
+        email: updatedOrder.email,
+        phone: updatedOrder.phone,
+        address: updatedOrder.address,
+        items: updatedOrder.items,
+        status: updatedOrder.status, // Preserve status or allow updates if needed
+      }),
+    });
+
+    if (response.ok) {
+      setOrders((prev) =>
+        prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o)),
+      );
+      setEditingOrder(null);
+    } else {
+      alert("Failed to save order");
+    }
+  };
+
   const handleExportCsv = () => {
     const headers = [
       "Order ID",
       "Customer",
       "Email",
+      "Phone",
       "Address",
       "Items",
       "Item Count",
       "Total",
+      "GCash Ref",
+      "Receipt URL",
       "Fulfillment",
       "Status",
       "Date",
@@ -248,10 +283,13 @@ export default function AdminPage() {
       o.id,
       o.name,
       o.email,
+      o.phone,
       `"${o.address}"`,
       `"${o.itemsSummary}"`,
       o.itemCount,
       o.subtotal,
+      `"${o.gcashReference || ""}"`,
+      o.gcashReceiptUrl || "",
       o.fulfillment,
       o.status,
       o.createdAt,
@@ -376,14 +414,18 @@ export default function AdminPage() {
                         Order / Customer
                       </th>
                       <th className="pb-4 whitespace-nowrap pr-4">Email</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Phone</th>
                       <th className="pb-4 whitespace-nowrap pr-4">Address</th>
                       <th className="pb-4 whitespace-nowrap pr-4">Items</th>
                       <th className="pb-4 whitespace-nowrap pr-4">Total</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Ref No.</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Receipt</th>
                       <th className="pb-4 whitespace-nowrap pr-4">
                         Fulfillment
                       </th>
                       <th className="pb-4 whitespace-nowrap pr-4">Status</th>
-                      <th className="pb-4 whitespace-nowrap">Date</th>
+                      <th className="pb-4 whitespace-nowrap pr-4">Date</th>
+                      <th className="pb-4 whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -397,6 +439,9 @@ export default function AdminPage() {
                         </td>
                         <td className="py-4 whitespace-nowrap text-white/80 pr-4">
                           {order.email}
+                        </td>
+                        <td className="py-4 whitespace-nowrap text-white/80 pr-4">
+                          {order.phone}
                         </td>
                         <td
                           className="py-4 text-white/80 max-w-xs truncate pr-4"
@@ -433,6 +478,23 @@ export default function AdminPage() {
                         <td className="py-4 whitespace-nowrap pr-4">
                           PHP {order.subtotal}
                         </td>
+                        <td className="py-4 whitespace-nowrap pr-4 font-mono text-xs">
+                          {order.gcashReference || "-"}
+                        </td>
+                        <td className="py-4 whitespace-nowrap pr-4">
+                          {order.gcashReceiptUrl ? (
+                            <button
+                              onClick={() =>
+                                setViewingReceipt(order.gcashReceiptUrl)
+                              }
+                              className="text-teal-400 hover:text-teal-300 text-xs font-bold uppercase underline"
+                            >
+                              View
+                            </button>
+                          ) : (
+                            <span className="text-white/20 text-xs">-</span>
+                          )}
+                        </td>
                         <td className="py-4 whitespace-nowrap capitalize pr-4">
                           {order.fulfillment}
                         </td>
@@ -457,8 +519,16 @@ export default function AdminPage() {
                             ))}
                           </select>
                         </td>
-                        <td className="py-4 whitespace-nowrap text-white/60">
+                        <td className="py-4 whitespace-nowrap text-white/60 pr-4">
                           {formatDate(order.createdAt)}
+                        </td>
+                        <td className="py-4 whitespace-nowrap">
+                          <button
+                            onClick={() => setEditingOrder(order)}
+                            className="text-teal-400 hover:text-teal-300 font-bold text-xs uppercase"
+                          >
+                            Edit
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -467,6 +537,47 @@ export default function AdminPage() {
               </div>
             </div>
           </>
+        )}
+        {editingOrder && (
+          <EditOrderModal
+            order={editingOrder}
+            onClose={() => setEditingOrder(null)}
+            onSave={handleSaveOrder}
+          />
+        )}
+
+        {viewingReceipt && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+            onClick={() => setViewingReceipt(null)}
+          >
+            <div className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-xl border border-white/10 shadow-2xl">
+              <img
+                src={viewingReceipt}
+                alt="Receipt"
+                className="max-h-[90vh] max-w-full object-contain"
+              />
+              <button
+                onClick={() => setViewingReceipt(null)}
+                className="absolute right-4 top-4 rounded-full bg-black/50 p-2 text-white hover:bg-black/70"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         )}
       </main>
     </div>
@@ -493,6 +604,184 @@ function StatCard({
         {title}
       </p>
       <p className="mt-2 text-3xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+function EditOrderModal({
+  order,
+  onClose,
+  onSave,
+}: {
+  order: OrderItem;
+  onClose: () => void;
+  onSave: (updatedOrder: OrderItem) => Promise<void>;
+}) {
+  const [formData, setFormData] = useState<OrderItem>(order);
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    await onSave(formData);
+    setSaving(false);
+  };
+
+  const updateItem = (index: number, field: keyof OrderLine, value: any) => {
+    const newItems = [...formData.items];
+    newItems[index] = { ...newItems[index], [field]: value };
+
+    // Recalculate line total if quantity or price changes
+    if (field === "quantity" || field === "unitPrice") {
+      newItems[index].lineTotal =
+        newItems[index].quantity * newItems[index].unitPrice;
+    }
+
+    const subtotal = newItems.reduce((sum, item) => sum + item.lineTotal, 0);
+    const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    // update summary
+    const itemsSummary = newItems.length
+      ? newItems
+          .map((item) => `${item.name} (${item.size}) x${item.quantity}`)
+          .join(" · ")
+      : "No items";
+
+    setFormData({
+      ...formData,
+      items: newItems,
+      subtotal,
+      itemCount,
+      itemsSummary,
+    });
+  };
+
+  const removeItem = (index: number) => {
+    const newItems = formData.items.filter((_, i) => i !== index);
+    const subtotal = newItems.reduce((sum, item) => sum + item.lineTotal, 0);
+    const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
+    const itemsSummary = newItems.length
+      ? newItems
+          .map((item) => `${item.name} (${item.size}) x${item.quantity}`)
+          .join(" · ")
+      : "No items";
+    setFormData({
+      ...formData,
+      items: newItems,
+      subtotal,
+      itemCount,
+      itemsSummary,
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-[#0a0f12] p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="mb-6 text-xl font-bold">Edit Order</h2>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs uppercase text-white/40">Email</label>
+            <input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="rounded-lg border border-white/10 bg-white/5 p-2 text-sm"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs uppercase text-white/40">Phone</label>
+            <input
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
+              className="rounded-lg border border-white/10 bg-white/5 p-2 text-sm"
+            />
+          </div>
+          <div className="col-span-2 flex flex-col gap-2">
+            <label className="text-xs uppercase text-white/40">Address</label>
+            <textarea
+              value={formData.address}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
+              className="rounded-lg border border-white/10 bg-white/5 p-2 text-sm"
+              rows={2}
+            />
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h3 className="mb-4 text-sm font-bold uppercase text-white/60">
+            Items
+          </h3>
+          <div className="flex flex-col gap-2">
+            {formData.items.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex gap-2 items-center bg-white/5 p-2 rounded-lg"
+              >
+                <div className="flex-1">
+                  <p className="text-sm font-bold">{item.name}</p>
+                  <p className="text-xs text-white/40">
+                    {item.size} - PHP {item.unitPrice}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs text-white/40">Qty</label>
+                  <input
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      updateItem(idx, "quantity", Number(e.target.value))
+                    }
+                    className="w-16 rounded border border-white/10 bg-black p-1 text-center text-sm"
+                    min="1"
+                  />
+                </div>
+                <div className="text-sm font-mono w-20 text-right">
+                  {item.lineTotal}
+                </div>
+                <button
+                  onClick={() => removeItem(idx)}
+                  className="text-red-400 hover:text-red-300 p-2"
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex justify-end gap-4 text-sm">
+            <span className="text-white/60">
+              Total Items:{" "}
+              <span className="text-white font-bold">{formData.itemCount}</span>
+            </span>
+            <span className="text-white/60">
+              Subtotal:{" "}
+              <span className="text-teal-400 font-bold">
+                PHP {formData.subtotal}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-8 flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="rounded-full px-6 py-2 hover:bg-white/10 transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded-full bg-teal-500 px-6 py-2 font-bold text-black hover:bg-teal-400 transition disabled:opacity-50"
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
