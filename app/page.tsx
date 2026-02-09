@@ -1084,6 +1084,12 @@ export default function Home() {
               {fulfillment === "delivery" && (
                 <div className="flex flex-col gap-3 rounded-xl border border-white/8 bg-white/3 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Delivery Address</p>
+                  <div className="flex items-center gap-2 rounded-lg bg-[#E47128]/10 px-3 py-2 text-xs text-[#E47128]">
+                    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 flex-shrink-0" aria-hidden="true">
+                      <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Delivery orders will be shipped after March 21, 2026. Shipping fees may apply depending on your location.
+                  </div>
 
                   {/* Region toggle */}
                   <div>
@@ -1191,10 +1197,28 @@ export default function Home() {
                   Payment via GCash
                 </p>
                 <p className="mt-1.5 text-xs text-white/40">
-                  Send payment then upload your receipt to confirm the order.
+                  Scan the QR code below to send payment, then upload your receipt to confirm the order.
                 </p>
 
-                <label className="mt-3 flex flex-col gap-1 text-xs text-white/50">
+                {/* GCash QR Code */}
+                <div className="mt-4 flex justify-center">
+                  <div className="overflow-hidden rounded-xl border border-white/10 bg-white p-2">
+                    <div className="relative h-48 w-48 sm:h-56 sm:w-56">
+                      <Image
+                        src="/gcash-qr.jpg"
+                        alt="GCash QR Code - Scan to pay"
+                        fill
+                        className="object-contain"
+                        sizes="224px"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-2 text-center text-[0.65rem] text-white/30">
+                  Scan with your GCash app to send payment
+                </p>
+
+                <label className="mt-4 flex flex-col gap-1 text-xs text-white/50">
                   GCash Reference No.
                   <input
                     type="text"
