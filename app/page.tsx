@@ -422,44 +422,31 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-[#0a1116] text-white">
       {/* ── Sticky Navbar ── */}
-      <nav className="sticky top-0 z-20 border-b border-white/8 bg-[#0d1a1f]">
+      <nav className="sticky top-0 z-20 border-b border-white/8 bg-[#0d1a1f]/95 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 lg:px-6">
-          {/* Logo / Brand */}
-          <div className="flex items-center gap-3">
-            <span className="font-display text-2xl leading-none text-[#00878F]">ADPH</span>
-            <span className="hidden text-xs uppercase tracking-[0.15em] text-white/50 sm:inline">Merch Store</span>
-          </div>
+          <a href="#" className="font-display text-xl leading-none text-[#00878F]">
+            Arduino Day PH
+          </a>
 
-          {/* Nav secondary bar */}
-          <div className="hidden items-center gap-1 text-xs text-white/60 md:flex">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#E47128]" />
-              March 21, 2026
-            </span>
-            <span className="mx-2 h-3 w-px bg-white/15" />
-            <span>Asia Pacific College, Makati</span>
-          </div>
-
-          {/* Nav actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setSizeGuideOpen(true)}
-              className="hidden rounded-md px-3 py-1.5 text-xs text-white/60 transition hover:bg-white/5 hover:text-white sm:inline-flex"
+              className="rounded-md px-3 py-1.5 text-xs text-white/50 transition hover:bg-white/5 hover:text-white"
             >
               Size Guide
             </button>
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 rounded-lg bg-[#00878F]/15 px-3 py-2 text-sm font-medium text-[#00878F] transition hover:bg-[#00878F]/25"
+              className="relative flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm text-white/70 transition hover:border-white/20 hover:text-white"
             >
               <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M3 6h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="hidden sm:inline">Cart</span>
+              Cart
               {cartCount > 0 && (
                 <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#E47128] px-1.5 text-[0.65rem] font-bold text-white">
                   {cartCount}
@@ -468,53 +455,30 @@ export default function Home() {
             </button>
           </div>
         </div>
-
-        {/* Sub-nav: categories strip (Amazon-style) */}
-        <div className="border-t border-white/5 bg-[#0a1518]">
-          <div className="mx-auto flex max-w-7xl items-center gap-4 overflow-x-auto px-4 py-2 text-xs text-white/50 lg:px-6">
-            <a href="#products" className="flex-shrink-0 text-white/80 transition hover:text-[#00878F]">All Products</a>
-            <span className="h-3 w-px bg-white/10" />
-            <button type="button" onClick={() => setSizeGuideOpen(true)} className="flex-shrink-0 transition hover:text-white/80 sm:hidden">Size Guide</button>
-            <span className="h-3 w-px bg-white/10 sm:hidden" />
-            <a href="#order-form" className="flex-shrink-0 transition hover:text-white/80">Place Order</a>
-            <span className="h-3 w-px bg-white/10" />
-            <span className="flex-shrink-0 text-[#E47128]/80">Limited Stock</span>
-          </div>
-        </div>
       </nav>
 
       {/* ── Hero Banner ── */}
-      <section className="relative border-b border-white/5 bg-[#081214]">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-10 text-center lg:px-6 lg:py-14">
-          <h1 className="font-display text-balance text-4xl leading-[1] sm:text-5xl lg:text-6xl">
-            <span className="text-[#00878F]">Arduino </span>
-            <span className="text-[#E47128]">Day </span>
-            <span className="text-[#21935B]">Philippines</span>
-            <span className="block text-white">2026 Official Merch</span>
-          </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-white/60">
-            Exclusive gear for builders, creators, and tinkerers. Limited quantities available -- order now and pick up at the event or get it delivered.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="#products"
-              className="rounded-lg bg-[#00878F] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#007078]"
-            >
-              Shop Now
-            </a>
-            <button
-              type="button"
-              onClick={() => {
-                if (cartItems.length > 0) {
-                  setCheckoutOpen(true);
-                } else {
-                  setCartOpen(true);
-                }
-              }}
-              className="rounded-lg border border-white/15 px-5 py-2.5 text-sm text-white/70 transition hover:border-white/30 hover:text-white"
-            >
-              {cartItems.length > 0 ? `Checkout (${cartCount})` : "View Cart"}
-            </button>
+      <section className="border-b border-white/5 bg-[#081214]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between lg:px-6 lg:py-10">
+          <div>
+            <h1 className="font-display text-balance text-3xl leading-tight sm:text-4xl">
+              <span className="text-[#00878F]">Arduino </span>
+              <span className="text-[#E47128]">Day </span>
+              <span className="text-[#21935B]">Philippines </span>
+              <span className="text-white">2026</span>
+            </h1>
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/50">
+              Official merch for builders, creators, and tinkerers. Limited stock -- order now for pickup or delivery.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col items-end gap-1 text-right text-xs text-white/40">
+              <span className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#E47128]" />
+                March 21, 2026
+              </span>
+              <span>Asia Pacific College, Makati</span>
+            </div>
           </div>
         </div>
       </section>
@@ -522,22 +486,13 @@ export default function Home() {
       {/* ── Product Grid ── */}
       <main className="mx-auto max-w-7xl px-4 py-8 lg:px-6 lg:py-10">
         {/* Results bar */}
-        <div id="products" className="mb-6 flex items-center justify-between scroll-mt-32">
-          <div>
-            <h2 className="text-lg font-semibold text-white">Available Merch</h2>
-            {!merchLoading && !merchError && (
-              <p className="mt-0.5 text-xs text-white/45">
-                {merchItems.length} {merchItems.length === 1 ? "item" : "items"} available
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => setSizeGuideOpen(true)}
-            className="rounded-md border border-white/10 px-3 py-1.5 text-xs text-white/50 transition hover:border-white/20 hover:text-white/80"
-          >
-            Sizing Guide
-          </button>
+        <div id="products" className="mb-6 scroll-mt-28">
+          <h2 className="text-base font-semibold text-white">Available Merch</h2>
+          {!merchLoading && !merchError && (
+            <p className="mt-0.5 text-xs text-white/40">
+              {merchItems.length} {merchItems.length === 1 ? "item" : "items"}
+            </p>
+          )}
         </div>
 
         {merchLoading ? (
@@ -586,9 +541,23 @@ export default function Home() {
                       sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       priority={index === 0}
                     />
-                    <span className="absolute left-3 top-3 rounded-md bg-[#0d1a1f]/90 px-2 py-1 text-[0.6rem] font-semibold uppercase tracking-wider text-white/80">
-                      {item.tag}
-                    </span>
+                    {item.tag && (
+                      <span
+                        className="absolute left-2.5 top-2.5 rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-white"
+                        style={{
+                          backgroundColor:
+                            item.tone === "teal"
+                              ? "#00878F"
+                              : item.tone === "orange"
+                                ? "#E47128"
+                                : item.tone === "green"
+                                  ? "#21935B"
+                                  : "#00878F",
+                        }}
+                      >
+                        {item.tag}
+                      </span>
+                    )}
                   </button>
 
                   {/* Product details */}
