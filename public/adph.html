@@ -1,0 +1,318 @@
+<table
+  style="
+    border-collapse: collapse;
+    table-layout: fixed;
+    border-spacing: 0;
+    vertical-align: top;
+    min-width: 320px;
+    margin: 0 auto;
+    background-color: #003333;
+    width: 100%;
+  "
+  cellpadding="0"
+  cellspacing="0"
+>
+  <tbody>
+    <tr>
+      <td
+        style="
+          word-break: break-word;
+          border-collapse: collapse !important;
+          vertical-align: top;
+          padding: 0;
+        "
+      >
+        <!-- Main Content Wrapper -->
+        <table
+          style="
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+          "
+          cellpadding="0"
+          cellspacing="0"
+        >
+          <!-- Header Image -->
+          <tr>
+            <td align="center" style="padding: 0">
+              <img
+                src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/header.png"
+                alt="Header"
+                style="
+                  display: block;
+                  width: 100%;
+                  max-width: 650px;
+                  height: auto;
+                  border: none;
+                  border-radius: 16px 16px 0 0;
+                "
+              />
+            </td>
+          </tr>
+          <!-- Content Section -->
+          <tr>
+            <td
+              style="
+                padding: 24px;
+                text-align: center;
+                font-family: &quot;IBM Plex Sans&quot;, sans-serif;
+              "
+            >
+              <h2
+                style="
+                  margin: 0;
+                  font-size: 16px;
+                  font-weight: 400;
+                  color: #003333;
+                  line-height: 140%;
+                "
+              >
+                <strong>Empowering Makers, Igniting Innovation!</strong>
+              </h2>
+            </td>
+          </tr>
+
+          <!-- Email Body -->
+          <tr>
+            <td
+              style="
+                padding: 32px 40px;
+                color: #2c2c2c;
+                font-family: &quot;IBM Plex Sans&quot;, sans-serif;
+                text-align: left;
+                word-break: break-word;
+              "
+            >
+              <p
+                style="
+                  font-size: 15px;
+                  line-height: 1.8;
+                  margin: 0 0 8px 0;
+                  color: #1a1a1a;
+                "
+              >
+                <strong>Hi {recipient},</strong>
+              </p>
+              <p
+                style="
+                  font-size: 15px;
+                  line-height: 1.8;
+                  margin: 0 0 24px 0;
+                  color: #4a4a4a;
+                "
+              >
+                Your order with an order id of <strong>{order_id}</strong> has
+                updated with a status of <strong>{order_status}</strong>.
+              </p>
+
+              <p
+                style="
+                  font-size: 15px;
+                  line-height: 1.8;
+                  margin: 0 0 8px 0;
+                  color: #4a4a4a;
+                "
+              >
+                <strong>Items:</strong>
+              </p>
+              <ul
+                style="
+                  margin: 0 0 24px 20px;
+                  padding: 0;
+                  font-size: 15px;
+                  line-height: 1.8;
+                  color: #4a4a4a;
+                "
+              >
+                {order_items}
+              </ul>
+
+              <!-- Signature -->
+              <p
+                style="
+                  font-size: 15px;
+                  line-height: 1.8;
+                  margin: 0 0 4px 0;
+                  color: #4a4a4a;
+                "
+              >
+                Continuously Innovating,
+              </p>
+              <p
+                style="
+                  font-size: 15px;
+                  line-height: 1.8;
+                  margin: 0;
+                  color: #1a1a1a;
+                "
+              >
+                <strong>Arduino Day Philippines Team</strong>
+              </p>
+
+              <!-- Logo -->
+              <div style="text-align: center; padding-top: 24px">
+                <img
+                  src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/logo.png"
+                  style="width: 117px; height: auto; border-radius: 8px"
+                />
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td
+              style="
+                background-color: #f5f5f5;
+                text-align: center;
+                padding: 32px 24px;
+                border-radius: 0 0 16px 16px;
+              "
+            >
+              <!-- Social Icons -->
+              <div style="margin: 0 0 20px 0; text-align: center">
+                <a
+                  href="#"
+                  style="
+                    display: inline-block;
+                    margin: 0 12px;
+                    vertical-align: middle;
+                    transition: opacity 0.3s;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/website.png"
+                    alt="Website"
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      display: block;
+                    "
+                  />
+                </a>
+                <a
+                  href="#"
+                  style="
+                    display: inline-block;
+                    margin: 0 12px;
+                    vertical-align: middle;
+                    transition: opacity 0.3s;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/email.png"
+                    alt="Email"
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      display: block;
+                    "
+                  />
+                </a>
+                <a
+                  href="#"
+                  style="
+                    display: inline-block;
+                    margin: 0 12px;
+                    vertical-align: middle;
+                    transition: opacity 0.3s;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/facebook.png"
+                    alt="Facebook"
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      display: block;
+                    "
+                  />
+                </a>
+                <a
+                  href="#"
+                  style="
+                    display: inline-block;
+                    margin: 0 12px;
+                    vertical-align: middle;
+                    transition: opacity 0.3s;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/linkedin.png"
+                    alt="LinkedIn"
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      display: block;
+                    "
+                  />
+                </a>
+                <a
+                  href="#"
+                  style="
+                    display: inline-block;
+                    margin: 0 12px;
+                    vertical-align: middle;
+                    transition: opacity 0.3s;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/instagram.png"
+                    alt="Instagram"
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      display: block;
+                    "
+                  />
+                </a>
+                <a
+                  href="#"
+                  style="
+                    display: inline-block;
+                    margin: 0 12px;
+                    vertical-align: middle;
+                    transition: opacity 0.3s;
+                  "
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/marvinjameserosa/arduino-day-email-template/refs/heads/master/assets/tiktok.png"
+                    alt="TikTok"
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      display: block;
+                    "
+                  />
+                </a>
+              </div>
+
+              <!-- Copyright -->
+              <p
+                style="
+                  font-size: 13px;
+                  color: #3a3a3a;
+                  font-family: &quot;Source Sans Pro&quot;, sans-serif;
+                  margin: 0;
+                  line-height: 1.5;
+                  letter-spacing: 0.2px;
+                "
+              >
+                Copyright © 2026 Arduino Day Philippines
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>

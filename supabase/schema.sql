@@ -12,6 +12,21 @@ begin
   end if;
 end $$;
 
+do $$
+begin
+  begin
+    alter type public.order_status add value if not exists 'paid';
+  exception
+    when duplicate_object then null;
+  end;
+
+  begin
+    alter type public.order_status add value if not exists 'cancelled';
+  exception
+    when duplicate_object then null;
+  end;
+end $$;
+
 create table if not exists public.merch_items (
   id uuid primary key default gen_random_uuid(),
   name text not null,

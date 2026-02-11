@@ -262,6 +262,9 @@ export default function AdminPage() {
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status } : o)),
       );
+      if (result.emailError) {
+        setOrdersError(result.emailError);
+      }
     } else {
       setOrdersError(result.error || "Unable to update order status.");
     }
@@ -291,6 +294,9 @@ export default function AdminPage() {
         prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o)),
       );
       setEditingOrder(null);
+      if (result.emailError) {
+        alert(result.emailError);
+      }
     } else {
       alert(result.error || "Failed to save order");
     }

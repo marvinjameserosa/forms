@@ -1,6 +1,10 @@
 "use server";
 
 import { supabaseAdmin } from "../../lib/supabase/admin";
+import {
+  sendOrderStatusEmail,
+  type OrderEmailRecord,
+} from "../../lib/email/orderEmail";
 
 type AdminUser = {
   app_metadata?: {
@@ -23,6 +27,10 @@ type UpdateOrderInput = {
   address?: string;
   items?: unknown[];
 };
+
+type UpdateOrderResult =
+  | { ok: true; emailError?: string }
+  | { ok: false; error: string };
 
 const requireAdmin = async (token: string): Promise<AdminAuthResult> => {
   if (!token) {
@@ -72,11 +80,21 @@ export const updateOrderAction = async (
 ) => {
   const auth = await requireAdmin(token);
   if (!auth.ok) {
-    return { ok: false, error: auth.error };
+    return { ok: false, error: auth.error } as UpdateOrderResult;
   }
 
   if (!updatesInput?.id) {
-    return { ok: false, error: "Missing order id." };
+    return { ok: false, error: "Missing order id." } as UpdateOrderResult;
+  }
+
+  const { data: existingOrder, error: existingError } = await supabaseAdmin
+    .from("orders")
+    .select("id,email,full_name,items,status")
+    .eq("id", updatesInput.id)
+    .maybeSingle();
+
+  if (existingError || !existingOrder) {
+    return { ok: false, error: "Order not found." } as UpdateOrderResult;
   }
 
   const updates: Record<string, unknown> = {};
@@ -93,6 +111,20 @@ export const updateOrderAction = async (
 
   if (error) {
     return { ok: false, error: "Unable to update order status." };
+  }
+
+  if (
+    updatesInput.status &&
+    updatesInput.status !== String(existingOrder.status)
+  ) {
+    const emailResult = await sendOrderStatusEmail({
+      order: existingOrder as OrderEmailRecord,
+      status: updatesInput.status,
+    });
+
+    if (!emailResult.ok) {
+      return { ok: true, emailError: emailResult.error };
+    }
   }
 
   return { ok: true };
