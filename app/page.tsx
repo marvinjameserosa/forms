@@ -440,6 +440,18 @@ export default function Home() {
     setCartItems((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const updateCartItemQuantity = (index: number, delta: number) => {
+    setCartItems((prev) =>
+      prev.map((item, i) => {
+        if (i === index) {
+          const newQuantity = Math.max(1, item.quantity + delta);
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      })
+    );
+  };
+
   const clearCart = () => {
     setCartItems([]);
   };
@@ -1178,13 +1190,31 @@ export default function Home() {
                       PHP {(item.price * item.quantity).toLocaleString()}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => removeFromCart(index)}
-                    className="flex-shrink-0 text-xs text-[#E47128]/80 transition hover:text-[#E47128]"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex flex-col items-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => removeFromCart(index)}
+                      className="text-xs text-[#E47128]/80 transition hover:text-[#E47128]"
+                    >
+                      Remove
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => updateCartItemQuantity(index, -1)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-2xl text-[#E47128] transition hover:bg-[#E47128]/10"
+                      >
+                        −
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateCartItemQuantity(index, 1)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-2xl text-[#E47128] transition hover:bg-[#E47128]/10"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))
             )}
