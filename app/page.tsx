@@ -626,7 +626,8 @@ export default function Home() {
                 <span className="text-[#21935B]">Philippines</span>
               </h1>
               <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/45">
-               Gear designed for daily wear, not just event day. Swipe to explore every piece.
+                Official merch for builders, creators, and tinkerers. Grab
+                limited-edition sets and individual items.
               </p>
             </div>
             <a
@@ -1251,8 +1252,11 @@ export default function Home() {
                   name="fullName"
                   placeholder="Juan Dela Cruz"
                   required
+<<<<<<< HEAD
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+=======
+>>>>>>> origin/main
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
                 />
                 <span className="text-[0.65rem] text-white/30">
@@ -1267,8 +1271,11 @@ export default function Home() {
                   name="email"
                   placeholder="you@email.com"
                   required
+<<<<<<< HEAD
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+=======
+>>>>>>> origin/main
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
                 />
                 <span className="text-[0.65rem] text-white/30">
@@ -1284,8 +1291,11 @@ export default function Home() {
                   placeholder="09XX XXX XXXX"
                   pattern="[0-9\s\-\+]{10,15}"
                   required
+<<<<<<< HEAD
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
+=======
+>>>>>>> origin/main
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
                 />
                 <span className="text-[0.65rem] text-white/30">
@@ -1499,7 +1509,11 @@ export default function Home() {
                   <div className="overflow-hidden rounded-xl border border-white/10 bg-white p-2">
                     <div className="relative h-48 w-48 sm:h-56 sm:w-56">
                       <Image
+<<<<<<< HEAD
                         src="/gcashqrc.png"
+=======
+                        src="/gcash-qr.jpg"
+>>>>>>> origin/main
                         alt="GCash QR Code - Scan to pay"
                         fill
                         className="object-contain"
@@ -1511,9 +1525,12 @@ export default function Home() {
                 <p className="mt-2 text-center text-[0.65rem] text-white/30">
                   Scan with your GCash app to send payment
                 </p>
+<<<<<<< HEAD
                 <p className="mt-1 text-center text-sm font-semibold text-[#00878F]">
                   GCash Number: 0966 230 8320
                 </p>
+=======
+>>>>>>> origin/main
 
                 <label className="mt-4 flex flex-col gap-1 text-xs text-white/50">
                   GCash Reference No.
@@ -1707,7 +1724,15 @@ export default function Home() {
       ) : null}
 
       {/* ── Footer ── */}
+<<<<<<< HEAD
       <Footer />
+=======
+      <footer className="border-t border-white/6 bg-[#0a1116]">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-white/30 lg:px-6">
+          Arduino Day Philippines 2026 -- Merch Orders
+        </div>
+      </footer>
+>>>>>>> origin/main
     </div>
   );
 }
