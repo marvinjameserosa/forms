@@ -150,6 +150,11 @@ export default function Home() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [contactNumber, setContactNumber] = useState("");
+  const [gcashReference, setGcashReference] = useState("");
+  const [fullNameError, setFullNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [contactNumberError, setContactNumberError] = useState("");
+  const [gcashReferenceError, setGcashReferenceError] = useState("");
   const [activeFilter, setActiveFilter] = useState<
     "all" | "sets" | "individual"
   >("all");
@@ -478,7 +483,6 @@ export default function Home() {
         .join(", ");
     }
 
-    const gcashReference = String(formData.get("gcashReference") ?? "").trim();
     const receiptFile = formData.get("gcashReceipt");
 
     if (!fullName.trim()) {
@@ -509,8 +513,23 @@ export default function Home() {
       return;
     }
 
-    if (!gcashReference) {
+    // Validate Philippine mobile number format
+    const cleanedPhone = contactNumber.replace(/[\s\-]/g, "");
+    const phMobileRegex = /^(09\d{9}|(\+639)\d{9})$/;
+    if (!phMobileRegex.test(cleanedPhone)) {
+      setSubmitError("Please enter a valid Philippine mobile number (09XXXXXXXXX).");
+      return;
+    }
+
+    if (!gcashReference.trim()) {
       setSubmitError("Please enter your GCash reference number.");
+      return;
+    }
+
+    // Validate GCash reference format (13 digits)
+    const cleanedGcash = gcashReference.replace(/[\s\-]/g, "");
+    if (!/^\d{13}$/.test(cleanedGcash)) {
+      setSubmitError("GCash reference number must be exactly 13 digits.");
       return;
     }
 
@@ -582,7 +601,7 @@ export default function Home() {
       address,
       payment_method: "gcash",
       fulfillment_method: fulfillmentMethod,
-      gcash_reference: gcashReference,
+      gcash_reference: gcashReference.replace(/[\s\-]/g, ""),
       gcash_receipt_url: receiptUrl,
       items: orderItems,
       delivery_fee: deliveryFeeValue,
@@ -610,6 +629,7 @@ export default function Home() {
     setFullName("");
     setEmail("");
     setContactNumber("");
+    setGcashReference("");
     setSubmitSuccess("Order received! We'll verify your GCash receipt.");
     setCheckoutOpen(false);
     setCheckoutStep(0);
@@ -1359,12 +1379,27 @@ export default function Home() {
                   placeholder="Juan Dela Cruz"
                   required
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFullName(value);
+                    if (!value.trim()) {
+                      setFullNameError("Please enter your full name.");
+                    } else {
+                      setFullNameError("");
+                    }
+                  }}
+                  className={`w-full rounded-lg border ${fullNameError ? "border-red-500/50" : "border-white/10"} bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30`}
                 />
-                <span className="text-[0.65rem] text-white/30">
-                  First name, middle initial, last name
-                </span>
+                {fullNameError && (
+                  <span className="text-[0.65rem] text-red-400">
+                    {fullNameError}
+                  </span>
+                )}
+                {!fullNameError && (
+                  <span className="text-[0.65rem] text-white/30">
+                    First name, middle initial, last name
+                  </span>
+                )}
               </label>
 
               <label className="flex flex-col gap-1.5 text-xs text-white/50">
@@ -1375,12 +1410,34 @@ export default function Home() {
                   placeholder="you@email.com"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setEmail(value);
+                    if (!value.trim()) {
+                      setEmailError("Please enter your email address.");
+                    } else {
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (!emailRegex.test(value)) {
+                        setEmailError("Please enter a valid email address.");
+                      } else if (value.endsWith('.co') && !value.endsWith('.co.uk') && !value.endsWith('.co.za')) {
+                        setEmailError("Did you mean '.com' instead of '.co'?");
+                      } else {
+                        setEmailError("");
+                      }
+                    }
+                  }}
+                  className={`w-full rounded-lg border ${emailError ? "border-red-500/50" : "border-white/10"} bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30`}
                 />
-                <span className="text-[0.65rem] text-white/30">
-                  We will send order updates to this email
-                </span>
+                {emailError && (
+                  <span className="text-[0.65rem] text-red-400">
+                    {emailError}
+                  </span>
+                )}
+                {!emailError && (
+                  <span className="text-[0.65rem] text-white/30">
+                    We will send order updates to this email
+                  </span>
+                )}
               </label>
 
               <label className="flex flex-col gap-1.5 text-xs text-white/50">
@@ -1392,12 +1449,37 @@ export default function Home() {
                   pattern="[0-9\s\-\+]{10,15}"
                   required
                   value={contactNumber}
-                  onChange={(e) => setContactNumber(e.target.value)}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setContactNumber(value);
+                    if (!value.trim()) {
+                      setContactNumberError("Please enter your contact number.");
+                    } else {
+                      // Remove spaces and dashes for validation
+                      const cleaned = value.replace(/[\s\-]/g, "");
+                      // Check if it's a valid Philippine mobile number
+                      // Format 1: 09XXXXXXXXX (11 digits starting with 09)
+                      // Format 2: +639XXXXXXXXX (13 chars starting with +639)
+                      const phMobileRegex = /^(09\d{9}|(\+639)\d{9})$/;
+                      if (!phMobileRegex.test(cleaned)) {
+                        setContactNumberError("Please enter a valid Philippine mobile number (09XXXXXXXXX).");
+                      } else {
+                        setContactNumberError("");
+                      }
+                    }
+                  }}
+                  className={`w-full rounded-lg border ${contactNumberError ? "border-red-500/50" : "border-white/10"} bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30`}
                 />
-                <span className="text-[0.65rem] text-white/30">
-                  Format: 09XX XXX XXXX (Philippine mobile number)
-                </span>
+                {contactNumberError && (
+                  <span className="text-[0.65rem] text-red-400">
+                    {contactNumberError}
+                  </span>
+                )}
+                {!contactNumberError && (
+                  <span className="text-[0.65rem] text-white/30">
+                    Format: 09XX XXX XXXX (Philippine mobile number)
+                  </span>
+                )}
               </label>
 
               <div className="flex gap-3 pt-2">
@@ -1411,7 +1493,8 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setCheckoutStep(2)}
-                  className="flex-1 rounded-lg bg-[#00878F] py-2.5 text-sm font-bold text-white transition hover:bg-[#007078]"
+                  disabled={!fullName.trim() || !email.trim() || !contactNumber.trim() || !!fullNameError || !!emailError || !!contactNumberError}
+                  className="flex-1 rounded-lg bg-[#00878F] py-2.5 text-sm font-bold text-white transition hover:bg-[#007078] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#00878F]"
                 >
                   Continue
                 </button>
@@ -1637,13 +1720,37 @@ export default function Home() {
                   <input
                     type="text"
                     name="gcashReference"
-                    placeholder="0000000000"
+                    placeholder="0000000000000"
                     required
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30"
+                    value={gcashReference}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setGcashReference(value);
+                      if (!value.trim()) {
+                        setGcashReferenceError("Please enter your GCash reference number.");
+                      } else {
+                        // Remove spaces and dashes for validation
+                        const cleaned = value.replace(/[\s\-]/g, "");
+                        // Check if it's exactly 13 digits
+                        if (!/^\d{13}$/.test(cleaned)) {
+                          setGcashReferenceError("GCash reference number must be exactly 13 digits.");
+                        } else {
+                          setGcashReferenceError("");
+                        }
+                      }
+                    }}
+                    className={`rounded-lg border ${gcashReferenceError ? "border-red-500/50" : "border-white/10"} bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 focus:border-[#00878F]/50 focus:outline-none focus:ring-1 focus:ring-[#00878F]/30`}
                   />
-                  <span className="text-[0.65rem] text-white/30">
-                    13-digit reference number from GCash
-                  </span>
+                  {gcashReferenceError && (
+                    <span className="text-[0.65rem] text-red-400">
+                      {gcashReferenceError}
+                    </span>
+                  )}
+                  {!gcashReferenceError && (
+                    <span className="text-[0.65rem] text-white/30">
+                      13-digit reference number from GCash
+                    </span>
+                  )}
                 </label>
 
                 <label className="mt-3 flex flex-col gap-1 text-xs text-white/50">
@@ -1724,7 +1831,7 @@ export default function Home() {
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || !gcashReference.trim() || !!gcashReferenceError}
                   className="flex-1 rounded-lg bg-[#E47128] py-3 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-[#d0641f] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Place Order"}
