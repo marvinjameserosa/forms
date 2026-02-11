@@ -19,6 +19,7 @@ create table if not exists public.merch_items (
   image text not null,
   tone text not null,
   price numeric(10,2) not null default 0,
+  weight_grams integer not null default 0,
   sizes text[] not null default array['One Size'],
   sort_order integer not null default 0,
   is_active boolean not null default true,
@@ -36,11 +37,20 @@ create table if not exists public.orders (
   gcash_reference text not null,
   gcash_receipt_url text not null,
   items jsonb not null default '[]'::jsonb,
+  delivery_fee numeric(10,2) not null default 0,
+  total_amount numeric(10,2) not null default 0,
+  total_weight numeric(10,2) not null default 0,
+  weight_unit text not null default 'g',
   status public.order_status not null default 'pending',
   created_at timestamptz not null default now()
 );
 
 alter table public.orders add column if not exists items jsonb not null default '[]'::jsonb;
+alter table public.merch_items add column if not exists weight_grams integer not null default 0;
+alter table public.orders add column if not exists delivery_fee numeric(10,2) not null default 0;
+alter table public.orders add column if not exists total_amount numeric(10,2) not null default 0;
+alter table public.orders add column if not exists total_weight numeric(10,2) not null default 0;
+alter table public.orders add column if not exists weight_unit text not null default 'g';
 alter table public.orders drop column if exists item_id;
 alter table public.orders drop column if exists item_name;
 alter table public.orders drop column if exists size;
@@ -104,7 +114,7 @@ create policy "Orders admin update"
 delete from public.orders;
 delete from public.merch_items;
 
-insert into public.merch_items (name, tag, image, tone, price, sizes, sort_order)
+insert into public.merch_items (name, tag, image, tone, price, weight_grams, sizes, sort_order)
 values
   (
     'Arduino Swags Pack',
@@ -112,6 +122,7 @@ values
     '/arduino_swags_pack/adph-swags.png',
     'from-amber-400/30 to-black/10',
     199,
+    200,
     array['One Size'],
     10
   ),
@@ -121,6 +132,7 @@ values
     '/arduino_starter_set/arduino-starter.png',
     'from-emerald-400/30 to-black/10',
     349,
+    250,
     array['XS','S','M','L','XL','XXL'],
     20
   ),
@@ -130,6 +142,7 @@ values
     '/arduino_gear_set/arduino-gear.png',
     'from-sky-500/35 to-black/10',
     499,
+    400,
     array['XS','S','M','L','XL','XXL'],
     30
   ),
@@ -139,6 +152,7 @@ values
     '/arduino_tech_set/arduino-tech.png',
     'from-cyan-500/30 to-black/10',
     399,
+    600,
     array['One Size'],
     40
   ),
@@ -148,6 +162,7 @@ values
     '/arduino_maker_bundle/arduino-maker.png',
     'from-teal-500/30 to-black/10',
     599,
+    550,
     array['XS','S','M','L','XL','XXL'],
     50
   ),
@@ -157,6 +172,7 @@ values
     '/arduino_startup_bundle/arduino-startup.png',
     'from-orange-500/30 to-black/10',
     649,
+    500,
     array['XS','S','M','L','XL','XXL'],
     60
   ),
@@ -166,6 +182,7 @@ values
     '/arduino_creator_bundle/arduino-creator.png',
     'from-indigo-500/30 to-black/10',
     699,
+    750,
     array['XS','S','M','L','XL','XXL'],
     70
   ),
@@ -175,6 +192,7 @@ values
     '/arduino_core_kit/arduino-core.png',
     'from-slate-800/40 to-black/10',
     899,
+    750,
     array['XS','S','M','L','XL','XXL'],
     80
   ),
@@ -184,6 +202,7 @@ values
     '/arduino_pro_builder_kit/arduino-pro.png',
     'from-zinc-700/40 to-black/10',
     1149,
+    980,
     array['XS','S','M','L','XL','XXL'],
     90
   ),
@@ -193,6 +212,7 @@ values
     '/arduino_ultimate_2026_kit/arduino-ultimate.png',
     'from-rose-500/30 to-black/10',
     1399,
+    1650,
     array['XS','S','M','L','XL','XXL'],
     100
   ),
@@ -202,6 +222,7 @@ values
     '/shirts/adph-shirt-variant1.png',
     'from-slate-900/45 to-black/10',
     300,
+    150,
     array['S','M','L','XL'],
     110
   ),
@@ -211,6 +232,7 @@ values
     '/vest/adph-vest-variant1.png',
     'from-slate-800/40 to-black/10',
     350,
+    200,
     array['M','L','XL'],
     120
   ),
@@ -220,6 +242,7 @@ values
     '/cap/adph-cap.png',
     'from-amber-400/30 to-black/10',
     150,
+    100,
     array['One Size'],
     130
   ),
@@ -228,6 +251,7 @@ values
     'Individual Item',
     '/mouse_pad/adph-mouse-pad-big.png',
     'from-teal-500/30 to-black/10',
+    300,
     300,
     array['One Size'],
     140
@@ -238,6 +262,7 @@ values
     '/mouse_pad/adph-mouse-pad-small.png',
     'from-cyan-500/30 to-black/10',
     130,
+    100,
     array['One Size'],
     150
   ),
@@ -247,6 +272,7 @@ values
     '/tote_bag/adph-tote-bag.png',
     'from-emerald-400/30 to-black/10',
     150,
+    100,
     array['One Size'],
     160
   ),
@@ -256,6 +282,7 @@ values
     '/mug/adph-mug.png',
     'from-amber-200/35 to-transparent',
     100,
+    300,
     array['One Size'],
     170
   ),
@@ -264,6 +291,7 @@ values
     'Individual Item',
     '/pins-and-magnets/adph-pins-and-magnets.png',
     'from-rose-400/30 to-black/10',
+    30,
     30,
     array['One Size'],
     180
@@ -274,6 +302,7 @@ values
     '/pins-and-magnets/adph-pins-and-magnets.png',
     'from-indigo-500/30 to-black/10',
     40,
+    50,
     array['One Size'],
     190
   ),
@@ -283,6 +312,7 @@ values
     '/stickers/adph-stickers.png',
     'from-slate-700/35 to-black/10',
     10,
+    20,
     array['One Size'],
     200
   );

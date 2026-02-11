@@ -13,6 +13,7 @@ type MerchItem = {
   tone: string;
   tag: string;
   price: number;
+  weightGrams: number;
   sizes: string[];
 };
 
@@ -21,6 +22,7 @@ type CartItem = {
   name: string;
   image?: string;
   price: number;
+  weightGrams: number;
   size: string;
   quantity: number;
 };
@@ -28,6 +30,60 @@ type CartItem = {
 const GCASH_BUCKET = "gcash-receipts";
 const MAX_RECEIPT_SIZE = 5 * 1024 * 1024;
 const CART_STORAGE_KEY = "adph-cart-items";
+
+const DELIVERY_RATE_TABLE = [
+  {
+    maxGrams: 500,
+    rates: { ncr: 85, luzon: 95, visayas: 100, mindanao: 105 },
+  },
+  {
+    maxGrams: 1000,
+    rates: { ncr: 115, luzon: 165, visayas: 180, mindanao: 195 },
+  },
+  {
+    maxGrams: 3000,
+    rates: { ncr: 155, luzon: 190, visayas: 200, mindanao: 220 },
+  },
+  {
+    maxGrams: 4000,
+    rates: { ncr: 200, luzon: 280, visayas: 300, mindanao: 330 },
+  },
+  {
+    maxGrams: 5000,
+    rates: { ncr: 220, luzon: 320, visayas: 370, mindanao: 370 },
+  },
+  {
+    maxGrams: 6000,
+    rates: { ncr: 255, luzon: 375, visayas: 435, mindanao: 435 },
+  },
+  {
+    maxGrams: 7000,
+    rates: { ncr: 295, luzon: 435, visayas: 505, mindanao: 505 },
+  },
+  {
+    maxGrams: 8000,
+    rates: { ncr: 335, luzon: 495, visayas: 575, mindanao: 575 },
+  },
+  {
+    maxGrams: 9000,
+    rates: { ncr: 375, luzon: 555, visayas: 645, mindanao: 645 },
+  },
+  {
+    maxGrams: 10000,
+    rates: { ncr: 415, luzon: 615, visayas: 715, mindanao: 715 },
+  },
+] as const;
+
+const getDeliveryFee = (
+  totalGrams: number,
+  region: "ncr" | "luzon" | "visayas" | "mindanao",
+) => {
+  const matchedTier = DELIVERY_RATE_TABLE.find(
+    (tier) => totalGrams > 0 && totalGrams <= tier.maxGrams,
+  );
+
+  return matchedTier ? matchedTier.rates[region] : null;
+};
 
 export default function Home() {
   const [merchItems, setMerchItems] = useState<MerchItem[]>([]);
@@ -55,10 +111,16 @@ export default function Home() {
               typeof item.name === "string" &&
               (!item.image || typeof item.image === "string") &&
               typeof item.price === "number" &&
+              (typeof item.weightGrams === "number" || item.weightGrams === undefined) &&
               typeof item.size === "string" &&
               typeof item.quantity === "number" &&
               item.quantity > 0,
           )
+            .map((item) => ({
+              ...item,
+              weightGrams:
+                typeof item.weightGrams === "number" ? item.weightGrams : 0,
+            }))
         : [];
     } catch {
       window.localStorage.removeItem(CART_STORAGE_KEY);
@@ -95,36 +157,6 @@ export default function Home() {
     "default",
   );
 
-  // Load cart from localStorage after mount (client-side only)
-  useEffect(() => {
-    const stored = window.localStorage.getItem(CART_STORAGE_KEY);
-    if (!stored) {
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(stored) as CartItem[];
-      const validItems = Array.isArray(parsed)
-        ? parsed.filter(
-            (item) =>
-              item &&
-              typeof item.itemId === "string" &&
-              typeof item.name === "string" &&
-              (!item.image || typeof item.image === "string") &&
-              typeof item.price === "number" &&
-              typeof item.size === "string" &&
-              typeof item.quantity === "number" &&
-              item.quantity > 0,
-          )
-        : [];
-      if (validItems.length > 0) {
-        setCartItems(validItems);
-      }
-    } catch {
-      window.localStorage.removeItem(CART_STORAGE_KEY);
-    }
-  }, []);
-
   useEffect(() => {
     let isActive = true;
 
@@ -132,7 +164,7 @@ export default function Home() {
       setMerchLoading(true);
       const { data, error } = await supabase
         .from("merch_items")
-        .select("id,name,image,tone,tag,price,sizes")
+        .select("id,name,image,tone,tag,price,weight_grams,sizes")
         .eq("is_active", true)
         .order("sort_order", { ascending: true });
 
@@ -152,6 +184,7 @@ export default function Home() {
           tone: item.tone,
           tag: item.tag,
           price: Number(item.price ?? 0),
+          weightGrams: Number(item.weight_grams ?? 0),
           sizes:
             Array.isArray(item.sizes) && item.sizes.length > 0
               ? item.sizes
@@ -237,6 +270,53 @@ export default function Home() {
       cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
     [cartItems],
   );
+  const cartItemsWithWeights = useMemo(() => {
+    if (merchItems.length === 0) {
+      return cartItems;
+    }
+
+    const weightLookup = new Map(
+      merchItems.map((item) => [item.id, item.weightGrams]),
+    );
+
+    return cartItems.map((item) => {
+      const knownWeight = weightLookup.get(item.itemId);
+      const resolvedWeight =
+        typeof knownWeight === "number" && knownWeight > 0
+          ? knownWeight
+          : item.weightGrams;
+      if (resolvedWeight === item.weightGrams) {
+        return item;
+      }
+      return { ...item, weightGrams: resolvedWeight };
+    });
+  }, [cartItems, merchItems]);
+  const cartWeightGrams = useMemo(
+    () =>
+      cartItemsWithWeights.reduce(
+        (total, item) => total + item.weightGrams * item.quantity,
+        0,
+      ),
+    [cartItemsWithWeights],
+  );
+  const cartWeightDisplay = useMemo(() => {
+    if (cartWeightGrams > 999) {
+      return `${(cartWeightGrams / 1000).toFixed(2)} kg`;
+    }
+    return `${cartWeightGrams.toLocaleString()} g`;
+  }, [cartWeightGrams]);
+  const deliveryFee = useMemo(() => {
+    if (fulfillment !== "delivery") {
+      return null;
+    }
+    return getDeliveryFee(cartWeightGrams, region);
+  }, [cartWeightGrams, fulfillment, region]);
+  const orderTotal = useMemo(() => {
+    if (fulfillment === "delivery" && deliveryFee !== null) {
+      return cartSubtotal + deliveryFee;
+    }
+    return cartSubtotal;
+  }, [cartSubtotal, deliveryFee, fulfillment]);
 
   const filteredItems = useMemo(() => {
     let items = merchItems.map((item, originalIndex) => ({
@@ -333,6 +413,7 @@ export default function Home() {
             name: merchItem.name,
             image: merchItem.image,
             price: merchItem.price ?? 0,
+            weightGrams: merchItem.weightGrams ?? 0,
             size,
             quantity,
           },
@@ -470,14 +551,29 @@ export default function Home() {
       .from(GCASH_BUCKET)
       .getPublicUrl(uploadPath).data.publicUrl;
 
-    const orderItems = cartItems.map((item) => ({
+    const orderItems = cartItemsWithWeights.map((item) => ({
       item_id: item.itemId,
       name: item.name,
       size: item.size,
       quantity: item.quantity,
       unit_price: item.price,
       line_total: item.price * item.quantity,
+      weight_grams: item.weightGrams,
+      line_weight_grams: item.weightGrams * item.quantity,
     }));
+
+    const deliveryFeeValue =
+      fulfillmentMethod === "delivery" && deliveryFee !== null
+        ? deliveryFee
+        : 0;
+    const totalAmount = cartSubtotal + deliveryFeeValue;
+
+    const totalWeightGrams = cartWeightGrams;
+    const useKilograms = totalWeightGrams > 999;
+    const totalWeight = useKilograms
+      ? Number((totalWeightGrams / 1000).toFixed(2))
+      : totalWeightGrams;
+    const weightUnit = useKilograms ? "kg" : "g";
 
     const orderPayload = {
       full_name: fullName.trim(),
@@ -489,6 +585,10 @@ export default function Home() {
       gcash_reference: gcashReference,
       gcash_receipt_url: receiptUrl,
       items: orderItems,
+      delivery_fee: deliveryFeeValue,
+      total_amount: totalAmount,
+      total_weight: totalWeight,
+      weight_unit: weightUnit,
       status: "pending" as const,
     };
 
@@ -1081,6 +1181,12 @@ export default function Home() {
                     PHP {cartSubtotal.toLocaleString()}
                   </span>
                 </div>
+                <div className="mt-1 flex items-center justify-between">
+                  <span className="text-xs text-white/40">Total Weight</span>
+                  <span className="text-sm font-semibold text-white/80">
+                    {cartWeightDisplay}
+                  </span>
+                </div>
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
@@ -1358,6 +1464,16 @@ export default function Home() {
                   <p className="text-xs font-semibold uppercase tracking-wider text-white/50">
                     Delivery Address
                   </p>
+                  <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/70">
+                    <span className="text-white/50">
+                      Estimated delivery fee (Total weight: {cartWeightDisplay})
+                    </span>
+                    <span className="font-semibold text-white">
+                      {deliveryFee === null
+                        ? "Rate unavailable"
+                        : `PHP ${deliveryFee.toLocaleString()}`}
+                    </span>
+                  </div>
                   <div className="flex items-center gap-2 rounded-lg bg-[#E47128]/10 px-3 py-2 text-xs text-[#E47128]">
                     <svg
                       viewBox="0 0 24 24"
@@ -1566,12 +1682,22 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="mt-3 border-t border-white/8 pt-3">
+                  {fulfillment === "delivery" && (
+                    <div className="mb-2 flex items-center justify-between text-sm">
+                      <span className="text-white/60">Delivery Fee</span>
+                      <span className="text-white/70">
+                        {deliveryFee === null
+                          ? "Rate unavailable"
+                          : `PHP ${deliveryFee.toLocaleString()}`}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-white/60">
                       Total
                     </span>
                     <span className="text-lg font-bold text-[#00878F]">
-                      PHP {cartSubtotal.toLocaleString()}
+                      PHP {orderTotal.toLocaleString()}
                     </span>
                   </div>
                 </div>

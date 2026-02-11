@@ -25,6 +25,8 @@ type OrderItem = {
   itemsSummary: string;
   itemCount: number;
   subtotal: number;
+  deliveryFee: number;
+  totalAmount: number;
   status:
     | "pending"
     | "paid"
@@ -115,6 +117,10 @@ export default function AdminPage() {
             (sum: number, item: OrderLine) => sum + item.lineTotal,
             0,
           );
+          const deliveryFee = Number(order.delivery_fee ?? 0);
+          const totalAmount = Number(
+            order.total_amount ?? subtotal + deliveryFee,
+          );
           const itemsSummary = items.length
             ? items
                 .map(
@@ -137,6 +143,8 @@ export default function AdminPage() {
             itemsSummary,
             itemCount,
             subtotal,
+            deliveryFee,
+            totalAmount,
             status: order.status,
             fulfillment: order.fulfillment_method,
             createdAt: order.created_at,
@@ -272,6 +280,7 @@ export default function AdminPage() {
       "Address",
       "Items",
       "Item Count",
+      "Delivery Fee",
       "Total",
       "GCash Ref",
       "Receipt URL",
@@ -287,7 +296,8 @@ export default function AdminPage() {
       `"${o.address}"`,
       `"${o.itemsSummary}"`,
       o.itemCount,
-      o.subtotal,
+      o.deliveryFee,
+      o.totalAmount,
       `"${o.gcashReference || ""}"`,
       o.gcashReceiptUrl || "",
       o.fulfillment,
@@ -476,7 +486,7 @@ export default function AdminPage() {
                           </div>
                         </td>
                         <td className="py-4 whitespace-nowrap pr-4">
-                          PHP {order.subtotal}
+                          PHP {order.totalAmount}
                         </td>
                         <td className="py-4 whitespace-nowrap pr-4 font-mono text-xs">
                           {order.gcashReference || "-"}
