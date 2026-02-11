@@ -80,10 +80,12 @@ export const sendOrderStatusEmail = async ({
   order,
   status,
   includeStatusLine = true,
+  fulfillmentNote,
 }: {
   order: OrderEmailRecord;
   status: string;
   includeStatusLine?: boolean;
+  fulfillmentNote?: string;
 }) => {
   const senderEmail = process.env.ARDUINODAYPH_SENDER_EMAIL;
   const senderPassword = process.env.ARDUINODAYPH_SENDER_PASSWORD;
@@ -127,6 +129,9 @@ export const sendOrderStatusEmail = async ({
   if (includeStatusLine) {
     textLines.push(`Status: ${statusLabel}`);
   }
+  if (fulfillmentNote) {
+    textLines.push("", fulfillmentNote);
+  }
   const textBody = textLines.join("\n");
   const template = await loadEmailTemplate();
   const statusBlock = includeStatusLine
@@ -157,11 +162,43 @@ export const sendOrderStatusEmail = async ({
       </div>
     `
     : "";
+  const fulfillmentBlock = fulfillmentNote
+    ? `
+      <table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        style="
+          border-collapse: collapse;
+          margin: 0 0 24px 0;
+          border: 1px solid #e7eceb;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #fdf7ef;
+        "
+      >
+        <tr>
+          <td
+            style="
+              padding: 14px 16px;
+              font-family: &quot;IBM Plex Sans&quot;, sans-serif;
+              color: #6a4a1f;
+              font-size: 14px;
+              line-height: 1.7;
+            "
+          >
+            ${escapeHtml(fulfillmentNote)}
+          </td>
+        </tr>
+      </table>
+    `
+    : "";
   const htmlBody = template
     .replace("{recipient}", escapeHtml(order.full_name ?? "Customer"))
     .replace("{order_id}", escapeHtml(order.id))
     .replace("{order_items}", escapeHtml(itemsSummary))
-    .replace("{status_block}", statusBlock);
+    .replace("{status_block}", statusBlock)
+    .replace("{fulfillment_note}", fulfillmentBlock);
 
   await transporter.sendMail({
     from: `${senderName} <${senderEmail}>`,

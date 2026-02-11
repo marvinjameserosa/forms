@@ -64,6 +64,10 @@ export const createOrderAction = async (
     order: data as OrderEmailRecord,
     status: "pending",
     includeStatusLine: input.fulfillment_method === "delivery",
+    fulfillmentNote:
+      input.fulfillment_method === "pickup"
+        ? "You can pick this up on the event day at Asia Pacific College on March 21, 2026. See you there!"
+        : "Delivery of orders will start to ship on March 21, 2026. Thank you for your patience!",
   });
 
   if (!emailResult.ok) {
