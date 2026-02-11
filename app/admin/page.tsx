@@ -39,13 +39,13 @@ type OrderItem = {
 };
 
 const statusStyles: Record<OrderItem["status"], string> = {
-  pending: "bg-amber-400/20 text-amber-200 border-amber-400/40",
-  paid: "bg-teal-400/20 text-teal-200 border-teal-400/40",
+  pending: "bg-[#E47128]/20 text-[#E47128] border-[#E47128]/40",
+  paid: "bg-[#00878F]/20 text-[#00878F] border-[#00878F]/40",
   confirmed: "bg-sky-400/20 text-sky-200 border-sky-400/40",
   packing: "bg-indigo-400/20 text-indigo-200 border-indigo-400/40",
   shipped: "bg-blue-400/20 text-blue-200 border-blue-400/40",
-  intransit: "bg-purple-400/20 text-purple-200 border-purple-400/40",
-  delivered: "bg-emerald-400/20 text-emerald-200 border-emerald-400/40",
+  intransit: "bg-slate-400/20 text-slate-200 border-slate-400/40",
+  delivered: "bg-[#21935B]/20 text-[#21935B] border-[#21935B]/40",
   cancelled: "bg-red-400/20 text-red-200 border-red-400/40",
 };
 
@@ -318,7 +318,7 @@ export default function AdminPage() {
     <div className="relative min-h-screen bg-[#050b0e] text-white">
       {/* Background Orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 left-[-10%] h-80 w-80 rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="absolute -top-32 left-[-10%] h-80 w-80 rounded-full bg-[#00878F]/10 blur-3xl" />
         <div className="absolute top-24 right-[-8%] h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
       </div>
 
@@ -344,7 +344,7 @@ export default function AdminPage() {
                 className="rounded-xl border border-white/10 bg-white/5 p-3"
               />
               {error && <p className="text-xs text-red-400">{error}</p>}
-              <button className="rounded-full bg-teal-500 py-3 font-bold text-black transition hover:bg-teal-400">
+              <button className="rounded-full bg-[#00878F] py-3 font-bold text-white transition hover:bg-[#007078]">
                 Login
               </button>
             </form>
@@ -463,7 +463,7 @@ export default function AdminPage() {
                                       ({item.size})
                                     </span>
                                   </span>
-                                  <span className="font-mono font-bold text-teal-200">
+                                  <span className="font-mono font-bold text-[#00878F]">
                                     x{item.quantity}
                                   </span>
                                 </div>
@@ -487,7 +487,7 @@ export default function AdminPage() {
                               onClick={() =>
                                 setViewingReceipt(order.gcashReceiptUrl)
                               }
-                              className="text-teal-400 hover:text-teal-300 text-xs font-bold uppercase underline"
+                              className="text-[#00878F] hover:text-[#007078] text-xs font-bold uppercase underline"
                             >
                               View
                             </button>
@@ -525,7 +525,7 @@ export default function AdminPage() {
                         <td className="py-4 whitespace-nowrap">
                           <button
                             onClick={() => setEditingOrder(order)}
-                            className="text-teal-400 hover:text-teal-300 font-bold text-xs uppercase"
+                            className="text-[#00878F] hover:text-[#007078] font-bold text-xs uppercase"
                           >
                             Edit
                           </button>
@@ -594,7 +594,7 @@ function StatCard({
   color?: string;
 }) {
   const colors: any = {
-    amber: "border-amber-400/20 bg-amber-400/10 text-amber-200",
+    amber: "border-[#E47128]/20 bg-[#E47128]/10 text-[#E47128]",
     sky: "border-sky-400/20 bg-sky-400/10 text-sky-200",
     white: "border-white/10 bg-white/5 text-white",
   };
@@ -759,7 +759,7 @@ function EditOrderModal({
             </span>
             <span className="text-white/60">
               Subtotal:{" "}
-              <span className="text-teal-400 font-bold">
+              <span className="text-[#00878F] font-bold">
                 PHP {formData.subtotal}
               </span>
             </span>
@@ -776,7 +776,7 @@ function EditOrderModal({
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-full bg-teal-500 px-6 py-2 font-bold text-black hover:bg-teal-400 transition disabled:opacity-50"
+            className="rounded-full bg-[#00878F] px-6 py-2 font-bold text-white hover:bg-[#007078] transition disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>

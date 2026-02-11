@@ -1,15 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a1116;
+  --foreground: #e8eaed;
   --ink: #0a1116;
   --deep-teal: #0a2a2d;
-  --teal: #0a7a7a;
-  --green: #1ea66b;
-  --amber: #f08a1a;
+  --teal: #00878F;
+  --orange: #E47128;
+  --green: #21935B;
   --mist: rgba(255, 255, 255, 0.14);
-  --glow: rgba(21, 180, 173, 0.35);
 }
 
 @theme inline {
@@ -17,13 +16,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sora);
   --font-display: var(--font-bebas);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
@@ -48,28 +40,6 @@ input[type="number"] {
   letter-spacing: 0.02em;
 }
 
-.glass-panel {
-  background: linear-gradient(135deg, rgba(8, 28, 31, 0.9), rgba(9, 36, 44, 0.75));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-}
-
-.fade-up {
-  animation: fadeUp 700ms ease-out both;
-}
-
-.fade-delay-1 {
-  animation-delay: 120ms;
-}
-
-.fade-delay-2 {
-  animation-delay: 240ms;
-}
-
-.fade-delay-3 {
-  animation-delay: 360ms;
-}
-
 .cart-toast {
   animation: cartToastIn 220ms ease-out both, cartToastOut 220ms ease-in both;
   animation-delay: 0ms, 1900ms;
@@ -77,45 +47,26 @@ input[type="number"] {
 
 .checkout-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(10, 122, 122, 0.8) rgba(255, 255, 255, 0.08);
+  scrollbar-color: rgba(0, 135, 143, 0.6) rgba(255, 255, 255, 0.04);
 }
 
 .checkout-scroll::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 .checkout-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 999px;
 }
 
 .checkout-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(10, 122, 122, 0.95),
-    rgba(30, 166, 107, 0.85)
-  );
+  background: rgba(0, 135, 143, 0.6);
   border-radius: 999px;
-  border: 2px solid rgba(5, 11, 14, 0.9);
+  border: 2px solid rgba(13, 26, 31, 0.9);
 }
 
 .checkout-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    180deg,
-    rgba(10, 122, 122, 1),
-    rgba(240, 138, 26, 0.85)
-  );
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  background: rgba(0, 135, 143, 0.8);
 }
 
 @keyframes cartToastIn {
