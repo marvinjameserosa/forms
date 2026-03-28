@@ -654,6 +654,13 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[#0a1116] text-white">
+      {/* ── Shop Closed Banner ── */}
+      <div className="bg-[#E47128] px-4 py-3 text-center">
+        <p className="text-sm font-semibold text-white">
+          The shop is now closed. All existing orders will be processed. Thank you for your support!
+        </p>
+      </div>
+
       {/* ── Sticky Navbar ── */}
       <nav className="sticky top-0 z-20 bg-[#0a1116]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-6">
@@ -762,12 +769,9 @@ export default function Home() {
                 limited-edition sets and individual items.
               </p>
             </div>
-            <a
-              href="#products"
-              className="flex-shrink-0 rounded-full bg-[#00878F] px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#007078]"
-            >
-              Shop Now
-            </a>
+            <span className="flex-shrink-0 rounded-full bg-white/10 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white/50">
+              Shop Closed
+            </span>
           </div>
         </div>
         <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
@@ -975,14 +979,13 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* Add to Cart button */}
+                      {/* Shop Closed - Add to Cart disabled */}
                       <button
                         type="button"
-                        onClick={() => addToCart(index)}
-                        disabled={!canAdd}
-                        className="mt-auto w-full rounded-lg bg-[#E47128] py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#d0641f] disabled:cursor-not-allowed disabled:opacity-30"
+                        disabled={true}
+                        className="mt-auto w-full rounded-lg bg-white/10 py-2.5 text-xs font-bold uppercase tracking-wider text-white/40 cursor-not-allowed"
                       >
-                        Add to Cart
+                        Shop Closed
                       </button>
                     </div>
                   </article>
@@ -1039,10 +1042,10 @@ export default function Home() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setCheckoutOpen(true)}
-                  className="rounded-lg bg-[#00878F] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#007078]"
+                  disabled={true}
+                  className="rounded-lg bg-white/10 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white/40 cursor-not-allowed"
                 >
-                  Proceed to Checkout
+                  Shop Closed
                 </button>
               </div>
             </div>
@@ -1240,15 +1243,17 @@ export default function Home() {
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
+                <div className="rounded-lg border border-[#E47128]/20 bg-[#E47128]/10 px-4 py-3 text-center">
+                  <p className="text-xs text-[#E47128]">
+                    The shop is now closed. All existing orders will be processed.
+                  </p>
+                </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setCartOpen(false);
-                    setCheckoutOpen(true);
-                  }}
-                  className="w-full rounded-lg bg-[#00878F] py-3 text-sm font-bold text-white transition hover:bg-[#007078]"
+                  disabled={true}
+                  className="w-full rounded-lg bg-white/10 py-3 text-sm font-bold text-white/40 cursor-not-allowed"
                 >
-                  Proceed to Checkout
+                  Shop Closed
                 </button>
                 <button
                   type="button"
